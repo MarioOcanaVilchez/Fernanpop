@@ -1,0 +1,320 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+    --verde: #27ae60;
+    --verde-oscuro: #219150;
+    --verde-suave: rgba(39, 174, 96, 0.12);
+    --blanco: #ffffff;
+    --gris-fondo: #f4f6f5;
+    --texto-principal: #1c1c1c;
+    --texto-secundario: #6b6b6b;
+
+    --radio-grande: 22px;
+    --radio-medio: 14px;
+    --radio-pill: 999px;
+
+    --sombra-card: 0 4px 14px rgba(0, 0, 0, 0.08);
+    --sombra-card-hover: 0 8px 22px rgba(0, 0, 0, 0.12);
+    --sombra-banner: 0 2px 10px rgba(0, 0, 0, 0.06);
+    --sombra-menu: 0 -2px 10px rgba(0, 0, 0, 0.07);
+
+    --alto-banner: 64px;
+    --alto-menu: 68px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--gris-fondo);
+    color: var(--texto-principal);
+    /* espacio para que el banner y el menú fijos no tapen contenido */
+    padding-top: var(--alto-banner);
+    padding-bottom: calc(var(--alto-menu) + 22px);
+}
+
+h1, h2, h3 {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+}
+
+button {
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+img {
+    display: block;
+}
+
+#bannerArriba {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--alto-banner);
+    background-color: var(--blanco);
+    box-shadow: var(--sombra-banner);
+    z-index: 100;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+}
+
+#bannerArriba img[alt="logo"] {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
+/* Texto del nombre de usuario / "Sesión no iniciada" */
+#bannerArriba {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--texto-principal);
+}
+
+#bannerArriba button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--verde-suave);
+    color: var(--verde-oscuro);
+    font-weight: 600;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: var(--radio-pill);
+    transition: background-color 0.2s ease;
+}
+#bannerArriba button svg{
+    width: 20px;
+    height: 20px;
+}
+
+#bannerArriba button:hover {
+    background-color: var(--verde);
+    color: var(--blanco);
+}
+
+#bannerArriba button img {
+    width: 18px;
+    height: 18px;
+    border-radius: var(--radio-pill);
+}
+.infoUsuario {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 12px;
+    overflow: hidden;
+}
+
+.avatarUsuario {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--blanco);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.avatarSinSesion {
+    background-color: var(--verde);
+}
+
+.nombreUsuario {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--texto-principal);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sinSesion {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--texto-secundario);
+    font-style: italic;
+}
+
+
+
+body {
+    background-color: var(--gris-fondo);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    padding: 40px 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 360px;
+    width: 90%;
+}
+
+.check-circle {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-color: #e74c3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.check-circle svg {
+    width: 48px;
+    height: 48px;
+}
+
+.mensaje {
+    font-size: 20px;
+    color: #333333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.recomendacion {
+    font-size: 13px;
+    color: #999999;
+    margin-bottom: 28px;
+    line-height: 1.4;
+}
+
+.btn-volver {
+    background-color: #2ecc71;
+    color: #ffffff;
+    border: none;
+    padding: 14px 36px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-volver:hover {
+    background-color: #27ae60;
+}
+
+.btn-volver:active {
+    transform: scale(0.97);
+}
+
+
+#menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: var(--alto-menu);
+    background-color: var(--blanco);
+    box-shadow: var(--sombra-menu);
+    z-index: 100;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px;
+}
+
+#menu button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    height: 100%;
+    color: var(--texto-secundario);
+    font-size: 11px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+#menu button:hover {
+    color: var(--verde);
+}
+
+#menu button .icono-menu {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+}
+
+#menu button p {
+    margin: 0;
+}
+
+#menu button:nth-child(3) {
+    position: relative;
+    top: -18px;
+    flex: 0 0 60px;
+    width: 60px;
+    height: 60px;
+    background-color: var(--verde);
+    border-radius: var(--radio-pill);
+    box-shadow: 0 6px 16px rgba(39, 174, 96, 0.45);
+    border: 4px solid var(--blanco);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+#menu button:nth-child(3):hover {
+    background-color: var(--verde-oscuro);
+    transform: translateY(-2px) scale(1.05);
+}
+
+
+#menu button:nth-child(3)::before,
+#menu button:nth-child(3)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: var(--blanco);
+    border-radius: 2px;
+}
+
+/* barra horizontal */
+#menu button:nth-child(3)::before {
+    width: 22px;
+    height: 3px;
+    transform: translate(-50%, -50%);
+}
+
+/* barra vertical */
+#menu button:nth-child(3)::after {
+    width: 3px;
+    height: 22px;
+    transform: translate(-50%, -50%);
+}
+

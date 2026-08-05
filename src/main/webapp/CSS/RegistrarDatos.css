@@ -1,0 +1,124 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #27ae60, #1e8449);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+form {
+    background-color: #ffffff;
+    padding: 45px 40px;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+form::before {
+    content: "Registrar";
+    display: block;
+    font-size: 26px;
+    font-weight: 700;
+    color: #1e8449;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+/* Subtítulo decorativo debajo del título */
+form::after {
+    content: "Crea tu cuenta en segundos";
+    display: block;
+    font-size: 13px;
+    color: #8a8a8a;
+    margin-bottom: 30px;
+    order: -1;
+}
+
+form input[type="text"],
+form input[type="password"],
+form input[type="number"] {
+    width: 100%;
+    padding: 14px 6px;
+    margin-bottom: 24px;
+    border: none;
+    border-bottom: 2px solid #e0e0e0;
+    border-radius: 6px 6px 0 0;
+    font-size: 15px;
+    background: #fafafa;
+    transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    outline: none;
+}
+
+form input[type="text"]::placeholder,
+form input[type="password"]::placeholder,
+form input[type="number"]::placeholder {
+    color: #a0a0a0;
+    font-weight: 400;
+}
+
+form input[type="text"]:hover,
+form input[type="password"]:hover,
+form input[type="number"]:hover {
+    background: #f2f2f2;
+}
+
+form input[type="text"]:focus,
+form input[type="password"]:focus,
+form input[type="number"]:focus {
+    border-color: #27ae60;
+    background: #ffffff;
+    box-shadow: 0 4px 10px -4px rgba(39, 174, 96, 0.35);
+}
+
+form input[type="submit"] {
+    width: 100%;
+    background: linear-gradient(135deg, #27ae60, #1e8449);
+    color: #ffffff;
+    border: none;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 12px;
+    letter-spacing: 0.3px;
+    box-shadow: 0 6px 16px -4px rgba(39, 174, 96, 0.5);
+    transition: background-color 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease;
+}
+
+form input[type="submit"]:hover {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -4px rgba(39, 174, 96, 0.6);
+}
+
+form input[type="submit"]:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px -4px rgba(39, 174, 96, 0.5);
+}
+
+form a {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 14px;
+    color: #27ae60;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+form a:hover {
+    color: #1e8449;
+    text-decoration: underline;
+}

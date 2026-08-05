@@ -1,0 +1,416 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+    --verde: #27ae60;
+    --verde-oscuro: #219150;
+    --verde-suave: rgba(39, 174, 96, 0.12);
+    --blanco: #ffffff;
+    --gris-fondo: #f4f6f5;
+    --texto-principal: #1c1c1c;
+    --texto-secundario: #6b6b6b;
+
+    --radio-grande: 22px;
+    --radio-medio: 14px;
+    --radio-pill: 999px;
+
+    --sombra-card: 0 4px 14px rgba(0, 0, 0, 0.08);
+    --sombra-card-hover: 0 8px 22px rgba(0, 0, 0, 0.12);
+    --sombra-banner: 0 2px 10px rgba(0, 0, 0, 0.06);
+    --sombra-menu: 0 -2px 10px rgba(0, 0, 0, 0.07);
+
+    --alto-banner: 64px;
+    --alto-menu: 68px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--gris-fondo);
+    color: var(--texto-principal);
+    padding-top: var(--alto-banner);
+    padding-bottom: calc(var(--alto-menu) + 22px);
+}
+
+h1, h2, h3 {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+}
+
+button {
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+img {
+    display: block;
+}
+
+
+#bannerArriba {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--alto-banner);
+    background-color: var(--blanco);
+    box-shadow: var(--sombra-banner);
+    z-index: 100;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+}
+
+#bannerArriba img[alt="logo"] {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
+/* Texto del nombre de usuario / "Sesión no iniciada" */
+#bannerArriba {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--texto-principal);
+}
+
+#bannerArriba button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--verde-suave);
+    color: var(--verde-oscuro);
+    font-weight: 600;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: var(--radio-pill);
+    transition: background-color 0.2s ease;
+}
+#bannerArriba button svg{
+    width: 20px;
+    height: 20px;
+}
+
+#bannerArriba button:hover {
+    background-color: var(--verde);
+    color: var(--blanco);
+}
+
+#bannerArriba button img {
+    width: 18px;
+    height: 18px;
+    border-radius: var(--radio-pill);
+}
+.infoUsuario {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 12px;
+    overflow: hidden;
+}
+
+.avatarUsuario {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--blanco);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.avatarSinSesion {
+    background-color: var(--verde);
+}
+
+.nombreUsuario {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--texto-principal);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sinSesion {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--texto-secundario);
+    font-style: italic;
+}
+
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Pequeño encabezado de contexto encima del formulario.*/
+body > h1 {
+    width: 100%;
+    max-width: 480px;
+    margin: 22px auto 4px;
+    padding: 0 20px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--texto-principal);
+}
+
+
+form {
+    width: 100%;
+    max-width: 480px;
+    margin: 22px auto;
+    padding: 26px 22px 30px;
+    background-color: var(--blanco);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-card);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    transition: box-shadow 0.2s ease;
+}
+
+form:hover {
+    box-shadow: var(--sombra-card-hover);
+}
+
+
+form input[type="file"] {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--texto-secundario);
+    padding: 22px 14px;
+    border: 2px dashed rgba(39, 174, 96, 0.35);
+    border-radius: var(--radio-medio);
+    background-color: var(--gris-fondo);
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+form input[type="file"]:hover {
+    border-color: var(--verde);
+    background-color: var(--verde-suave);
+}
+
+form input[type="file"]::file-selector-button {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--verde-oscuro);
+    background-color: var(--verde-suave);
+    border: none;
+    border-radius: var(--radio-pill);
+    padding: 8px 14px;
+    margin-right: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+form input[type="file"]::file-selector-button:hover {
+    background-color: var(--verde);
+    color: var(--blanco);
+}
+
+form img{
+    border-radius: 15px;
+    width: 30%;
+}
+form input[type="text"],
+form input[type="number"] {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--texto-principal);
+    background-color: var(--gris-fondo);
+    border: 1.5px solid transparent;
+    border-radius: var(--radio-medio);
+    padding: 13px 16px;
+    outline: none;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+form input[type="text"]::placeholder,
+form input[type="number"]::placeholder {
+    color: var(--texto-secundario);
+}
+
+form input[type="text"]:focus,
+form input[type="number"]:focus {
+    border-color: var(--verde);
+    background-color: var(--blanco);
+    box-shadow: 0 0 0 3px var(--verde-suave);
+}
+
+
+form input[name="descripcion"] {
+    min-height: 78px;
+}
+
+
+form select {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--texto-principal);
+    background-color: var(--gris-fondo);
+    border: 1.5px solid transparent;
+    border-radius: var(--radio-medio);
+    padding: 13px 40px 13px 16px;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1l6 6 6-6' fill='none' stroke='%2327ae60' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+form select:focus {
+    border-color: var(--verde);
+    background-color: var(--blanco);
+    box-shadow: 0 0 0 3px var(--verde-suave);
+}
+
+
+form input[type="submit"] {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--blanco);
+    background-color: var(--verde);
+    border: none;
+    border-radius: var(--radio-pill);
+    padding: 14px 0;
+    margin-top: 6px;
+    box-shadow: 0 6px 16px rgba(39, 174, 96, 0.35);
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+form input[type="submit"]:hover {
+    background-color: var(--verde-oscuro);
+    transform: translateY(-2px);
+}
+
+form input[type="submit"]:active {
+    transform: translateY(0);
+}
+
+
+
+
+#menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: var(--alto-menu);
+    background-color: var(--blanco);
+    box-shadow: var(--sombra-menu);
+    z-index: 100;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px;
+}
+
+#menu button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    height: 100%;
+    color: var(--texto-secundario);
+    font-size: 11px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+#menu button:hover {
+    color: var(--verde);
+}
+
+#menu button .icono-menu {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+}
+
+#menu button p {
+    margin: 0;
+}
+
+
+#menu button:nth-child(3) {
+    position: relative;
+    top: -18px;
+    flex: 0 0 60px;
+    width: 60px;
+    height: 60px;
+    background-color: var(--verde);
+    border-radius: var(--radio-pill);
+    box-shadow: 0 6px 16px rgba(39, 174, 96, 0.45);
+    border: 4px solid var(--blanco);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+#menu button:nth-child(3):hover {
+    background-color: var(--verde-oscuro);
+    transform: translateY(-2px) scale(1.05);
+}
+
+
+#menu button:nth-child(3)::before,
+#menu button:nth-child(3)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: var(--blanco);
+    border-radius: 2px;
+}
+
+/* barra horizontal */
+#menu button:nth-child(3)::before {
+    width: 22px;
+    height: 3px;
+    transform: translate(-50%, -50%);
+}
+
+/* barra vertical */
+#menu button:nth-child(3)::after {
+    width: 3px;
+    height: 22px;
+    transform: translate(-50%, -50%);
+}
+
+
+@media (max-width: 560px) {
+    form {
+        margin: 14px 12px;
+        padding: 20px 16px 24px;
+        border-radius: var(--radio-medio);
+    }
+}
