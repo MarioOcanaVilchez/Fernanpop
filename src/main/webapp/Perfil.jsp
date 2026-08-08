@@ -65,13 +65,6 @@
             int hash = Math.abs(email.hashCode());
             String colorAvatar = coloresAvatar[hash % coloresAvatar.length];
             out.print("<div class=\"avatar-perfil\" style=\"background-color:" + colorAvatar + "\">");
-            /*
-            <!--<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="8.5" r="3.6" fill="#ffffff"/>
-                <path d="M4.8 19.2c1.2-3.4 4-5.1 7.2-5.1s6 1.7 7.2 5.1c.25.7-.25 1.4-1 1.4H5.8c-.75 0-1.25-.7-1-1.4z" fill="#ffffff"/>
-            </svg>-->
-
-             */
                 String inicial = !email.isEmpty() ? email.substring(0, 1).toUpperCase() : "?";
                 out.print(inicial);
             %>

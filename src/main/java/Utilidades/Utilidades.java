@@ -1,6 +1,7 @@
 package Utilidades;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class Utilidades {
@@ -50,5 +51,11 @@ public class Utilidades {
     }
     public static LocalDate pasarFechaLocaldate(String fecha){
         return LocalDate.of(Integer.parseInt(fecha.substring(0,4)),Integer.parseInt(fecha.substring(5,7)),Integer.parseInt(fecha.substring(8)));
+    }
+    public static String pasarFechaHoraBBDD(LocalDateTime fecha){
+        return fecha.getYear() + "/" + (fecha.getMonthValue() < 10 ? "0" + fecha.getMonthValue() : fecha.getMonthValue() ) + "/" + fecha.getDayOfMonth() + " " + fecha.getHour() + ":" + fecha.getMinute() + ":" + fecha.getMinute();
+    }
+    public static LocalDateTime pasarFechaHoraLocaldate(String fecha){
+        return LocalDateTime.of(Integer.parseInt(fecha.substring(0,4)),Integer.parseInt(fecha.substring(5,7)),Integer.parseInt(fecha.substring(8,10)), Integer.parseInt(fecha.substring(11,13)), Integer.parseInt(fecha.substring(14,16)),Integer.parseInt(fecha.substring(17,19)),Integer.parseInt(fecha.substring(20,22)));
     }
 }

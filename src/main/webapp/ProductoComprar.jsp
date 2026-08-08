@@ -89,7 +89,7 @@
             "        <input type=\"number\" min=\"0\" name=\"precio\" placeholder=\"oferta\" step=\"0.01\" required>\n" +
             "        <input type=\"submit\" value=\"Hacer oferta\">\n" +
             "    </form>\n" +
-            "    <button id=\"BotonMensaje\"> mensaje</button>\n </div>" +
+            "    <button id=\"BotonMensaje\" onclick=\"window.location.href='CrearChat.jsp?idUser=" + gestionAPP.buscaUserPorProducto(producto).getId() + "'\"> mensaje</button>\n </div>" +
             "</div>");
 %>
 <!-- Menú de abajo -->

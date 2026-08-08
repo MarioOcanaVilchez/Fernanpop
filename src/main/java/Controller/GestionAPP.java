@@ -1,9 +1,7 @@
 package Controller;
 
-import Dao.DaoManager;
-import Dao.DaoProductoSQL;
-import Dao.DaoTratoSQL;
-import Dao.DaoUsuarioSQL;
+import Dao.*;
+import Modelos.Chat;
 import Modelos.Producto;
 import Modelos.Trato;
 import Modelos.Usuario;
@@ -22,6 +20,8 @@ public class GestionAPP {
     private DaoUsuarioSQL daoUsuario;
     private DaoProductoSQL daoProducto;
     private DaoTratoSQL daoTrato;
+    private DaoChatSQL daoChat;
+    private DaoMensajeSQL daoMensaje;
     private Usuario usuario;
 
     public GestionAPP() {
@@ -29,6 +29,8 @@ public class GestionAPP {
         daoUsuario = new DaoUsuarioSQL();
         daoTrato = new DaoTratoSQL();
         daoProducto = new DaoProductoSQL();
+        daoChat = new DaoChatSQL();
+        daoMensaje = new DaoMensajeSQL();
         //Persistencia.existenCarpetas();
         //usuario = cogeUsuarioSesionAnt();
     }
@@ -328,6 +330,26 @@ public class GestionAPP {
     }
     public String encriptarClave(String clave){
         return BCrypt.hashpw(clave,BCrypt.gensalt());
+    }
+
+    //Chats
+    public ArrayList<Chat> getChats(){
+        return daoChat.getChats(dao,daoUsuario,usuario);
+    }
+    public Chat recargaChat(long id){
+        return null;
+    }
+    public long buscaChat(int idUser){
+        return daoChat.buscaChat(dao,usuario,idUser);
+    }
+    public Usuario buscaUsuarioId(int id){
+        return daoUsuario.buscaUsuarioId(dao,id);
+    }
+    public boolean creaChat(int idUser){
+        Usuario[] usuarios = new Usuario[2];
+        usuarios[0] = usuario;
+        usuarios[1] = buscaUsuarioId(idUser);
+        return daoChat.crearChat(dao,usuarios);
     }
 
 }
