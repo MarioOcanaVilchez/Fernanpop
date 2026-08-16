@@ -1,0 +1,592 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+    --verde: #27ae60;
+    --verde-oscuro: #219150;
+    --verde-suave: rgba(39, 174, 96, 0.12);
+    --blanco: #ffffff;
+    --gris-fondo: #f4f6f5;
+    --texto-principal: #1c1c1c;
+    --texto-secundario: #6b6b6b;
+    --azul-admin-fondo: #e3f2fd;
+    --azul-admin-texto: #1c3a5e;
+
+    --radio-grande: 22px;
+    --radio-medio: 14px;
+    --radio-pill: 999px;
+
+    --sombra-card: 0 4px 14px rgba(0, 0, 0, 0.08);
+    --sombra-card-hover: 0 8px 22px rgba(0, 0, 0, 0.12);
+    --sombra-banner: 0 2px 10px rgba(0, 0, 0, 0.06);
+    --sombra-menu: 0 -2px 10px rgba(0, 0, 0, 0.07);
+
+    --alto-banner: 64px;
+    --alto-menu: 68px;
+    --alto-cabecera-chat: 60px;
+    --alto-envio: 64px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--gris-fondo);
+    color: var(--texto-principal);
+    padding-top: var(--alto-banner);
+    padding-bottom: calc(var(--alto-menu) + 22px);
+}
+
+h1, h2, h3 {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+}
+
+button {
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+img {
+    display: block;
+}
+
+#bannerArriba {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--alto-banner);
+    background-color: var(--blanco);
+    box-shadow: var(--sombra-banner);
+    z-index: 100;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+}
+
+#bannerArriba img[alt="logo"] {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
+/* Texto del nombre de usuario / "Sesión no iniciada" */
+#bannerArriba {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--texto-principal);
+}
+
+#bannerArriba button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--verde-suave);
+    color: var(--verde-oscuro);
+    font-weight: 600;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: var(--radio-pill);
+    transition: background-color 0.2s ease;
+}
+#bannerArriba button svg{
+    width: 20px;
+    height: 20px;
+}
+
+#bannerArriba button:hover {
+    background-color: var(--verde);
+    color: var(--blanco);
+}
+
+#bannerArriba button img {
+    width: 18px;
+    height: 18px;
+    border-radius: var(--radio-pill);
+}
+.infoUsuario {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 12px;
+    overflow: hidden;
+}
+
+.avatarUsuario {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--blanco);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.avatarSinSesion {
+    background-color: var(--verde);
+}
+
+.nombreUsuario {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--texto-principal);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sinSesion {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--texto-secundario);
+    font-style: italic;
+}
+
+#menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: var(--alto-menu);
+    background-color: var(--blanco);
+    box-shadow: var(--sombra-menu);
+    z-index: 100;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px;
+}
+
+#menu button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    height: 100%;
+    color: var(--texto-secundario);
+    font-size: 11px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+#menu button:hover {
+    color: var(--verde);
+}
+
+#menu button .icono-menu {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+}
+
+#menu button p {
+    margin: 0;
+}
+
+#menu button:nth-child(3) {
+    position: relative;
+    top: -18px;
+    flex: 0 0 60px;
+    width: 60px;
+    height: 60px;
+    background-color: var(--verde);
+    border-radius: var(--radio-pill);
+    box-shadow: 0 6px 16px rgba(39, 174, 96, 0.45);
+    border: 4px solid var(--blanco);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+#menu button:nth-child(3):hover {
+    background-color: var(--verde-oscuro);
+    transform: translateY(-2px) scale(1.05);
+}
+
+#menu button:nth-child(3)::before,
+#menu button:nth-child(3)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: var(--blanco);
+    border-radius: 2px;
+}
+
+/* barra horizontal */
+#menu button:nth-child(3)::before {
+    width: 22px;
+    height: 3px;
+    transform: translate(-50%, -50%);
+}
+
+/* barra vertical */
+#menu button:nth-child(3)::after {
+    width: 3px;
+    height: 22px;
+    transform: translate(-50%, -50%);
+}
+
+
+
+/* ============================================================
+   CABECERA DEL CHAT (fija, justo debajo del banner superior)
+   ============================================================ */
+#cabeceraChat {
+    position: fixed;
+    top: var(--alto-banner);
+    left: 0;
+    width: 100%;
+    height: var(--alto-cabecera-chat);
+    background-color: var(--blanco);
+    box-shadow: var(--sombra-banner);
+    z-index: 90;
+
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 12px;
+}
+
+/* Botón de volver, pegado a la izquierda */
+#cabeceraChat button {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    margin: 0;
+    color: var(--texto-principal);
+}
+
+#cabeceraChat button svg {
+    width: 24px;
+    height: 24px;
+}
+
+#cabeceraChat button:hover {
+    color: var(--verde);
+}
+
+/* Avatar circular junto al botón */
+.avatar-perfil {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--blanco);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* Nombre del chat, grande, al lado del avatar */
+#cabeceraChat h1 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--texto-principal);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ============================================================
+   ZONA DE MENSAJES (con scroll interno)
+   ============================================================ */
+#chat {
+    position: fixed;
+    top: calc(var(--alto-banner) + var(--alto-cabecera-chat));
+    bottom: var(--alto-menu);
+    left: 0;
+    width: 100%;
+
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    padding: 16px 12px calc(var(--alto-envio) + 16px) 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scrollbar-width: none;
+
+    background-color: var(--gris-fondo);
+}
+
+/* Contenedor de cada mensaje: alineación según tipo */
+.mensaje-wrapper {
+    display: flex;
+    position: relative;
+    width: 100%;
+}
+
+.mensaje-wrapper[data-tipo="admin"] {
+    justify-content: center;
+}
+
+.mensaje-wrapper[data-tipo="otro"] {
+    justify-content: flex-start;
+}
+
+.mensaje-wrapper[data-tipo="propio"] {
+    justify-content: flex-end;
+}
+
+/* Reset de párrafos dentro de las burbujas */
+.mensajeAdministracion p,
+.mensajeOtroUser p,
+.mensajePropio p {
+    margin: 0;
+}
+
+.mensajeAdministracion p:first-child,
+.mensajeOtroUser p:first-child,
+.mensajePropio p:first-child {
+    margin-bottom: 3px;
+}
+
+/* Fecha / email en tamaño pequeño y discreto */
+.mensajeOtroUser p:first-child {
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--verde-oscuro);
+}
+
+.mensajeOtroUser p:last-child,
+.mensajePropio p:last-child {
+    font-size: 10px;
+    opacity: 0.7;
+    margin-top: 4px;
+    text-align: right;
+}
+
+/* --- Mensaje de administración: centrado, fondo azul suave --- */
+.mensajeAdministracion {
+    background-color: var(--azul-admin-fondo);
+    color: var(--azul-admin-texto);
+    border-radius: var(--radio-medio);
+    padding: 10px 16px;
+    max-width: 80%;
+    text-align: center;
+    font-size: 14px;
+    box-shadow: var(--sombra-card);
+}
+
+/* --- Mensaje de otro usuario: izquierda, blanco, pico a la izquierda --- */
+.mensajeOtroUser {
+    position: relative;
+    background-color: var(--blanco);
+    color: var(--texto-principal);
+    border-radius: var(--radio-medio);
+    border-bottom-left-radius: 4px;
+    padding: 8px 12px;
+    max-width: 75%;
+    font-size: 14px;
+    box-shadow: var(--sombra-card);
+}
+
+.mensajeOtroUser::after {
+    content: "";
+    position: absolute;
+    left: -7px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border: 7px solid transparent;
+    border-right-color: var(--blanco);
+    border-bottom: 0;
+    border-left: 0;
+}
+
+/* --- Mensaje propio: derecha, verde, pico a la derecha --- */
+.mensajePropio {
+    position: relative;
+    background-color: var(--verde);
+    color: var(--blanco);
+    border-radius: var(--radio-medio);
+    border-bottom-right-radius: 4px;
+    padding: 8px 12px;
+    max-width: 75%;
+    font-size: 14px;
+    box-shadow: var(--sombra-card);
+}
+
+.mensajePropio::after {
+    content: "";
+    position: absolute;
+    right: -7px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border: 7px solid transparent;
+    border-left-color: var(--verde);
+    border-bottom: 0;
+    border-right: 0;
+}
+
+/* ============================================================
+   FORMULARIO DE ENVÍO (fijo, justo encima del menú inferior)
+   ============================================================ */
+#enviarMensajes {
+    position: fixed;
+    bottom: var(--alto-menu);
+    left: 0;
+    width: 100%;
+    height: var(--alto-envio);
+    z-index: 90;
+
+    background-color: var(--blanco);
+    box-shadow: var(--sombra-banner);
+
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+}
+
+#enviarMensajes form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+#enviarMensajes input[type="text"] {
+    flex: 0 0 85%;
+    width: 85%;
+    height: 42px;
+    padding: 0 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: var(--radio-pill);
+    background-color: var(--gris-fondo);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--texto-principal);
+    outline: none;
+}
+
+#enviarMensajes input[type="text"]:focus {
+    border-color: var(--verde);
+}
+
+#enviarMensajes button {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: var(--verde);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+
+    /* Oculta el texto "enviar" y deja solo el icono */
+    font-size: 0;
+}
+
+#enviarMensajes button:hover {
+    background-color: var(--verde-oscuro);
+}
+/* ============================================================
+   MENÚ CONTEXTUAL DE MENSAJES (clic derecho)
+   ============================================================ */
+.menuMensajeDropdown {
+    position: absolute;
+    min-width: 140px;
+    background-color: var(--blanco);
+    border-radius: var(--radio-medio);
+    box-shadow: var(--sombra-card-hover);
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+    z-index: 50;
+}
+
+.menuMensajeDropdown.activo {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Mensajes propios: el menú se abre JUSTO ENCIMA del mensaje, pegado a la derecha */
+.mensaje-wrapper[data-tipo="propio"] .menuMensajeDropdown {
+    right: 0;
+    bottom: calc(100% + 6px);
+    transform: translateY(6px);
+}
+.mensaje-wrapper[data-tipo="propio"] .menuMensajeDropdown.activo {
+    transform: translateY(0);
+}
+
+/* Mensajes de otro usuario: el menú se abre JUSTO ENCIMA del mensaje, pegado a la izquierda */
+.mensaje-wrapper[data-tipo="otro"] .menuMensajeDropdown {
+    left: 0;
+    bottom: calc(100% + 6px);
+    transform: translateY(6px);
+}
+.mensaje-wrapper[data-tipo="otro"] .menuMensajeDropdown.activo {
+    transform: translateY(0);
+}
+
+/* Mensajes de administración: el menú se abre JUSTO DEBAJO del mensaje, centrado */
+.mensaje-wrapper[data-tipo="admin"] .menuMensajeDropdown {
+    left: 50%;
+    top: calc(100% + 6px);
+    transform: translate(-50%, -6px);
+}
+.mensaje-wrapper[data-tipo="admin"] .menuMensajeDropdown.activo {
+    transform: translate(-50%, 0);
+}
+
+.menuMensajeDropdown a {
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--texto-principal);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.menuMensajeDropdown a:hover {
+    background-color: var(--verde-suave);
+    color: var(--verde-oscuro);
+}
+
+/* Acciones destructivas (cualquier enlace "eliminar...") en rojo,
+   sin importar en qué posición estén dentro del menú */
+.menuMensajeDropdown a[href^="eliminar"] {
+    color: #d93025;
+}
+
+.menuMensajeDropdown a[href^="eliminar"]:hover {
+    background-color: rgba(217, 48, 37, 0.08);
+    color: #d93025;
+}

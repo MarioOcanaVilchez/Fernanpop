@@ -22,6 +22,7 @@ public class GestionAPP {
     private DaoTratoSQL daoTrato;
     private DaoChatSQL daoChat;
     private DaoMensajeSQL daoMensaje;
+    private DaoBloqueoSQL daoBloqueo;
     private Usuario usuario;
 
     public GestionAPP() {
@@ -31,6 +32,7 @@ public class GestionAPP {
         daoProducto = new DaoProductoSQL();
         daoChat = new DaoChatSQL();
         daoMensaje = new DaoMensajeSQL();
+        daoBloqueo = new DaoBloqueoSQL();
         //Persistencia.existenCarpetas();
         //usuario = cogeUsuarioSesionAnt();
     }
@@ -334,10 +336,15 @@ public class GestionAPP {
 
     //Chats
     public ArrayList<Chat> getChats(){
-        return daoChat.getChats(dao,daoUsuario,usuario);
+        return daoChat.getChats(dao,daoUsuario,daoMensaje,usuario);
+    }
+    public Chat getChat(long idChat){
+        return daoChat.getChat(dao,daoUsuario,daoMensaje,usuario,idChat);
     }
     public Chat recargaChat(long id){
-        return null;
+        Chat chat = daoChat.cargaChat(dao,daoMensaje,daoUsuario,usuario,id);
+        if (chat != null) daoMensaje.leeMensajesChat(dao,chat.getId(),usuario);
+        return chat;
     }
     public long buscaChat(int idUser){
         return daoChat.buscaChat(dao,usuario,idUser);
@@ -349,7 +356,51 @@ public class GestionAPP {
         Usuario[] usuarios = new Usuario[2];
         usuarios[0] = usuario;
         usuarios[1] = buscaUsuarioId(idUser);
-        return daoChat.crearChat(dao,usuarios);
+        if (daoChat.crearChat(dao,usuarios)){
+            enviaPrimerMensaje(buscaChat(idUser),usuarios);
+            return true;
+        }
+        return false;
+    }
+    public boolean enviaPrimerMensaje(long idChat,Usuario[] usuarios){
+        String contenido = "bienvenido a este nuevo chat";
+        return daoMensaje.enviaPrimerMensaje(dao,contenido,idChat,usuarios);
+    }
+    public boolean enviarMensaje(long idChat,String mensaje){
+        Usuario [] usuarios = daoChat.getUsuariosChat(dao,daoUsuario,idChat);
+        if (daoMensaje.insertaMensaje(dao,mensaje,idChat,usuarios,LocalDateTime.now(),usuario.getId())){
+            daoChat.actualizaUltimoMensaje(dao,mensaje,LocalDateTime.now(),usuario);
+            return true;
+        }
+        return false;
+    }
+    public int getTotalMensajesNoLeidos(){
+        return daoMensaje.determinarTotalMensajesSinLeer(dao,usuario);
+    }
+    public int getMensajesNoLeidos(long idChat){
+        return daoMensaje.determinarMensajesSinLeer(dao,idChat,usuario);
+    }
+    public boolean eliminarMensajeParaUser(long idChat,long idMensaje){
+        return daoMensaje.eliminaMensaje(dao,idChat,idMensaje,usuario);
+    }
+    public boolean eliminarMensajeChat(long idChat,long idMensaje){
+        return daoMensaje.eliminaContenidoMensaje(dao,idChat,idMensaje);
+    }
+    //bloqueos
+    public boolean userBloqueado(int idUser){
+        return daoBloqueo.userBloqueado(dao,usuario.getId(),idUser);
+    }
+    public boolean otroUserBloqueoAUser(int idUser){
+        return daoBloqueo.userBloqueado(dao,idUser,usuario.getId());
+    }
+    public boolean bloqueaUser(int idUser){
+        return daoBloqueo.bloqueaUser(dao,usuario.getId(),idUser);
+    }
+    public boolean desbloquearUser(int idUser){
+        return daoBloqueo.desbloquearUser(dao,usuario.getId(),idUser);
+    }
+    public boolean enviarMensajeDeBloqueado(long idChat,String mensaje){
+        return daoMensaje.insertaMensajeDeBloqueado(dao,mensaje,idChat,LocalDateTime.now(),usuario.getId());
     }
 
 }

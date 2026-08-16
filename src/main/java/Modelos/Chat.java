@@ -10,6 +10,7 @@ public class Chat {
     private String nombre;
     private LocalDateTime fechaUltimoMensaje;
     private String ultimoMensaje;
+    private int mensajesNoLeidos;
 
     public Chat(long id, Usuario[] usuarios, String nombre, LocalDateTime fechaUltimoMensaje, String ultimoMensaje) {
         this.id = id;
@@ -17,6 +18,15 @@ public class Chat {
         this.nombre = nombre;
         this.fechaUltimoMensaje = fechaUltimoMensaje;
         this.ultimoMensaje = ultimoMensaje;
+    }
+
+    public Chat(long id, Usuario[] usuarios, String nombre, LocalDateTime fechaUltimoMensaje, String ultimoMensaje, int mensajesNoLeidos) {
+        this.id = id;
+        this.usuarios = usuarios;
+        this.nombre = nombre;
+        this.fechaUltimoMensaje = fechaUltimoMensaje;
+        this.ultimoMensaje = ultimoMensaje;
+        this.mensajesNoLeidos = mensajesNoLeidos;
     }
 
     public long getId() {
@@ -65,5 +75,20 @@ public class Chat {
 
     public void setUltimoMensaje(String ultimoMensaje) {
         this.ultimoMensaje = ultimoMensaje;
+    }
+
+    public int getMensajesNoLeidos() {
+        return mensajesNoLeidos;
+    }
+
+    public void setMensajesNoLeidos(int mensajesNoLeidos) {
+        this.mensajesNoLeidos = mensajesNoLeidos;
+    }
+
+    public void addMensajes(ArrayList<Mensaje> mensajes){
+        this.mensajes = mensajes;
+    }
+    public Usuario getOtroUsuario(){
+        return usuarios[1];
     }
 }

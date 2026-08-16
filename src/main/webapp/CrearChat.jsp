@@ -12,13 +12,10 @@
     else{
         int idUser = Integer.parseInt(request.getParameter("idUser"));
         long idChat = gestionAPP.buscaChat(idUser);
-        if (idChat != -1){
-            //enviar para cargar el chat
-        } else {
-            if (gestionAPP.creaChat(idUser)){
-                //enviar para cargar el chat
-                
-            } else {
+        if (idChat != -1) response.sendRedirect("UsaChat.jsp?idChat=" + idChat);
+        else {
+            if (gestionAPP.creaChat(idUser)) response.sendRedirect("UsaChat.jsp?idChat=" + gestionAPP.buscaChat(idUser));
+            else {
                 session.setAttribute("error","Error al crear el chat");
                 session.setAttribute("recomendacion","Compruebe la conexión");
                 response.sendRedirect("Error.jsp");

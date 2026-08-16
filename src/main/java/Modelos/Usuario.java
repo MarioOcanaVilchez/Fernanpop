@@ -112,6 +112,16 @@ public class Usuario implements Serializable {
         this.movil = movil;
         this.admin = admin;
     }
+
+    public Usuario(int id) {
+        this.id = id;
+        email = null;
+        apel = null;
+        clave = null;
+        movil = -1;
+        admin = false;
+    }
+
     public double notaMedia(ArrayList<Trato> historicoVentas){
         int cont = 0;
         double media = 0;

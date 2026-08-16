@@ -1,6 +1,7 @@
 <%@ page import="Controller.GestionAPP" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="Modelos.Chat" %><%--
+<%@ page import="Modelos.Chat" %>
+<%@ page import="Utilidades.Utilidades" %><%--
   Created by IntelliJ IDEA.
   User: carni
   Date: 12/07/2026
@@ -12,11 +13,13 @@
 <head>
     <title>Selector de chat</title>
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
-    <link rel="stylesheet" type="text/css" href="CSS/parteGlobal.css">
+    <link rel="stylesheet" type="text/css" href="CSS/SeleccionaChat.css">
 </head>
 <body>
 <% GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
   if (gestionAPP.getUsuario() == null) response.sendRedirect("InicioSesion.jsp");
+  session.setAttribute("idChat",null);
+  session.setAttribute("accion","comprobarRecargaChats");
 %>
 <!-- banner de arriba-->
 <%
@@ -61,25 +64,112 @@
     out.print("</div>");
 %>
 <%
+    session.setAttribute("totalMensajesSinLeer", gestionAPP.getTotalMensajesNoLeidos());
     ArrayList<Chat> chats = gestionAPP.getChats();
-    if (chats == null || chats.isEmpty()) out.print("<p>No has iniciado ningún chat aún</p>");
-    else {
-        for (Chat c: chats){
-            out.print("<button class=\"chat\" onclick=\"window.location.href='nose.jsp?idChat=" + c.getId() + "'\">");
+    if (chats == null || chats.isEmpty()) {
+        out.print("<p>No has iniciado ningún chat aún</p>");
+    } else {
+        for (Chat c : chats) {
+            out.print("<div class=\"chat\">");
+            out.print("<button onclick=\"window.location.href='UsaChat.jsp?idChat=" + c.getId() + "'\">");
             String email = c.getNombre();
             int hash = Math.abs(email.hashCode());
             String colorAvatar = coloresAvatar[hash % coloresAvatar.length];
-            out.print("<div class=\"avatar-perfil\" style=\"background-color:" + colorAvatar + "\">");
-            String inicial = !email.isEmpty() ? email.substring(0, 1).toUpperCase() : "?";
-            out.print(inicial);
+            if (!gestionAPP.otroUserBloqueoAUser(c.getOtroUsuario().getId())) {
+                out.print("<div class=\"avatar-perfil\" style=\"background-color:" + colorAvatar + "\">");
+                String inicial = !email.isEmpty() ? email.substring(0, 1).toUpperCase() : "?";
+                out.print(inicial);
+            } else {
+                out.print("<div class=\"avatar-perfil\" style=\"background-color:#f4f6f5\">");
+                out.print("<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n" +
+                        "                <circle cx=\"12\" cy=\"8.5\" r=\"3.6\" fill=\"#ffffff\"/>\n" +
+                        "                <path d=\"M4.8 19.2c1.2-3.4 4-5.1 7.2-5.1s6 1.7 7.2 5.1c.25.7-.25 1.4-1 1.4H5.8c-.75 0-1.25-.7-1-1.4z\" fill=\"#ffffff\"/>\n" +
+                        "            </svg>");
+            }
             out.print("</div>" +
-            "<h1>" + c.getNombre() + "</h1>" +
-            "<p>" + c.getUltimoMensaje() + "</p>" +
-            "<p class=\"fecha\">" + c.getFechaUltimoMensaje() + "</p>" + "</button>");
+                    "<h1>" + c.getNombre() + "</h1>" +
+                    "<p>" + c.getUltimoMensaje() + "</p>" +
+                    (c.getMensajesNoLeidos() != 0 ? "<div class=\"numMensajesSinLeer\">" + c.getMensajesNoLeidos() + "</div>" : "") +
+                    (c.getFechaUltimoMensaje() == null ? "" : "<p class=\"fecha\">" + Utilidades.pasarFechaHoraBBDD(c.getFechaUltimoMensaje()) + "</p>") +
+                    "</button>");
+
+            // Botón de los 3 puntos
+            out.print("<button class=\"btn-menu-chat\" onclick=\"toggleMenuChat(event, this)\">" +
+                    "<svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"currentColor\">" +
+                    "<circle cx=\"12\" cy=\"5\" r=\"2\"/>" +
+                    "<circle cx=\"12\" cy=\"12\" r=\"2\"/>" +
+                    "<circle cx=\"12\" cy=\"19\" r=\"2\"/>" +
+                    "</svg>" +
+                    "</button>");
+
+            out.print("<div class=\"menuChat\">\n" +
+                    "    <a href=\"VaciaChat.jsp?idChat=" + c.getId() + "\">Vaciar chat</a>\n");
+            if (!gestionAPP.userBloqueado(c.getOtroUsuario().getId())) out.print("    <a href=\"BloqueaUser.jsp?idUser=" + c.getOtroUsuario().getId() + "\">Bloquear</a>\n");
+            else out.print("    <a href=\"DesbloquearUser.jsp?idUser=" + c.getOtroUsuario().getId() + "\">Desbloquear</a>\n");
+            out.print("    <a href=\"MarcarMensajesLeidos.jsp?idChat=" + c.getId() + "\">Marcar mensajes leidos</a>\n" +
+                    "</div>");
+
+            out.print("</div>"); // cierre .chat
         }
     }
 %>
 
+<script>
+    function comprobarRecarga() {
+        fetch("ProcesarAccion.jsp")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Error en la petición");
+                }
+                return response.text();
+            })
+            .then(resultado => {
+                resultado = resultado.trim();
+
+                // Si devuelve algo, redirigimos
+                if (resultado !== "") {
+                    window.location.href = "SeleccionChats.jsp";
+                    return;
+                }
+                // Si no devuelve nada, esperamos 2 segundos
+                // y volvemos a intentarlo
+                setTimeout(comprobarRecarga, 2000);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                window.location.href = "Error.jsp";
+            });
+    }
+    // Primera ejecución
+    comprobarRecarga();
+</script>
+
+<script>
+    function toggleMenuChat(event, btn) {
+        // Evita que el clic se propague al div .chat o dispare otros listeners
+        event.stopPropagation();
+
+        const chatDiv = btn.closest('.chat');
+        const menu = chatDiv.querySelector('.menuChat');
+        const yaAbierto = menu.classList.contains('show');
+
+        // Cierra cualquier otro menú abierto (solo uno a la vez)
+        document.querySelectorAll('.menuChat.show').forEach(m => m.classList.remove('show'));
+
+        // Si no estaba abierto, lo abrimos; si estaba abierto, lo dejamos cerrado (toggle)
+        if (!yaAbierto) {
+            menu.classList.add('show');
+        }
+    }
+
+    // Cierra el menú si se hace clic fuera de él
+    document.addEventListener('click', function (event) {
+        const menuAbierto = document.querySelector('.menuChat.show');
+        if (menuAbierto && !menuAbierto.contains(event.target) && !event.target.closest('.btn-menu-chat')) {
+            menuAbierto.classList.remove('show');
+        }
+    });
+</script>
 
 <!-- Menú de abajo -->
 <div id="menu">

@@ -1,28 +1,25 @@
 <%@ page import="Controller.GestionAPP" %>
-<%@ page import="Modelos.Producto" %><%--
+<%@ page import="Modelos.Chat" %>
+<%@ page import="Modelos.Mensaje" %>
+<%@ page import="Utilidades.Utilidades" %>
+<%@ page import="java.time.Duration" %>
+<%@ page import="java.time.LocalDateTime" %><%--
   Created by IntelliJ IDEA.
   User: carni
-  Date: 12/07/2026
-  Time: 16:27
+  Date: 10/08/2026
+  Time: 15:41
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <%
-        GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
-        int idProducto = Integer.parseInt(request.getParameter("id"));
-        Producto producto = gestionAPP.buscarProductoId(idProducto);
-        session.setAttribute("producto",producto);
-        session.setAttribute("accion","procesoCompra");
-        session.setAttribute("idChat",null);
-    %>
-    <title><%= "Comprar " + producto.getTitulo()%></title>
-    <link rel="stylesheet" type="text/css" href="CSS/ProductoComprar.css?v=4">
+    <title>Title</title>
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
+    <link rel="stylesheet" type="text/css" href="CSS/UsaChat.css?v=4">
 </head>
 <body>
 <%
+    GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
     // Paleta de colores estilo Google
     String[] coloresAvatar = {
             "#e53935", "#8e24aa", "#3949ab", "#1e88e5",
@@ -63,36 +60,165 @@
             "            </svg> Perfil</button>");
     out.print("</div>");
 %>
-<!--Función que hace aparecer o desaparecer un elemento-->
-<script>
-    function cambiaVisibilidad(id) {
-        const elemento = document.getElementById(id);
-        elemento.style.display = (elemento.style.display === "none") ? "block" : "none";
-    }
-</script>
 <%
-    out.print("<div id=\"producto\">\n");
-    if (producto.getNombreImagen() == null) out.print("<img alt=\"imagen del producto\" src=\"imagenes/Captura%20de%20pantalla%202026-07-09%20164506.png\">");
-    else out.print("<img alt=\"imagen del producto\" src=\"" + request.getContextPath()
-            + "/VerImagen?nombreImagen=" + producto.getNombreImagen() + "\">");
-    out.print("<div id=\"infoProducto\"><h1>" + producto.getTitulo() + "</h1>\n" +
-            "    <p>" + producto.getDescripcion() + "</p>\n" +
-            "    <p>");
-    if (producto.getPrecio() % 1 == 0) out.print((int) producto.getPrecio());
-    else out.print(producto.getPrecio());
-    out.print(" €</p>\n" +
-            "    <p>Oferta de " + gestionAPP.buscaUserPorProducto(producto).getEmail() + "</p>\n" +
-            "    <p>Estado: " + producto.getEstado() + "</p>\n" +
-            "    <button id=\"BotonComprar\" onclick=\"window.location.href='pantallaEspera.jsp?precio=" + producto.getPrecio() + "'\"> Comprar</button>\n" +
-            "    <button id=\"BotonOferta\" onclick=\"cambiaVisibilidad('oferta')\"> Hacer oferta</button>\n" +
-            "    <form id=\"oferta\" method=\"get\" action=\"pantallaEspera.jsp\">\n" +
-            " <button id=\"BotonCancelar\" onclick=\"cambiaVisibilidad('oferta')\" type=\"button\"></button>" +
-            "        <input type=\"number\" min=\"0\" name=\"precio\" placeholder=\"oferta\" step=\"0.01\" required>\n" +
-            "        <input type=\"submit\" value=\"Hacer oferta\">\n" +
-            "    </form>\n" +
-            "    <button id=\"BotonMensaje\" onclick=\"window.location.href='CrearChat.jsp?idUser=" + gestionAPP.buscaUserPorProducto(producto).getId() + "'\"> mensaje</button>\n </div>" +
-            "</div>");
+    if (session.getAttribute("idChat") == null) session.setAttribute("idChat",Long.parseLong(request.getParameter("idChat")));
+    long idChat = (long) session.getAttribute("idChat");
+    Chat chat =gestionAPP.recargaChat(idChat);
+    session.setAttribute("accion","comprobarRecargaChat");
 %>
+<div id="cabeceraChat">
+    <button onclick="window.location.href='SeleccionChats.jsp'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+    </button>
+    <%
+        String email = chat.getNombre();
+        int hash = Math.abs(email.hashCode());
+        String colorAvatar = coloresAvatar[hash % coloresAvatar.length];
+        if (!gestionAPP.otroUserBloqueoAUser(chat.getOtroUsuario().getId())) {
+            out.print("<div class=\"avatar-perfil\" style=\"background-color:" + colorAvatar + "\">");
+            String inicial = !email.isEmpty() ? email.substring(0, 1).toUpperCase() : "?";
+            out.print(inicial);
+        } else {
+            out.print("<div class=\"avatar-perfil\" style=\"background-color:#f4f6f5\">");
+            out.print("<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n" +
+                    "                <circle cx=\"12\" cy=\"8.5\" r=\"3.6\" fill=\"#ffffff\"/>\n" +
+                    "                <path d=\"M4.8 19.2c1.2-3.4 4-5.1 7.2-5.1s6 1.7 7.2 5.1c.25.7-.25 1.4-1 1.4H5.8c-.75 0-1.25-.7-1-1.4z\" fill=\"#ffffff\"/>\n" +
+                    "            </svg>");
+        }
+        out.print("</div>" +
+                "<h1>" + chat.getNombre() + "</h1>");
+
+    %>
+</div>
+<div id="chat">
+    <%
+        if (chat.getMensajes() == null || chat.getMensajes().isEmpty()){
+            out.print("<p>No hay mensajes</p>");
+        } else {
+            for (Mensaje m : chat.getMensajes()) {
+
+                if (m.getUsuario().getId() == -1) {
+                    // Mensaje de Administración
+                    out.print("<div class=\"mensaje-wrapper\" data-id=\"" + m.getId() + "\" data-tipo=\"admin\">\n");
+                    out.print("    <div class=\"mensajeAdministracion\">\n" +
+                            "        <p>" + m.getContenido() + "</p>\n" +
+                            "    </div>\n");
+                    out.print("    <div class=\"menuMensajeDropdown\">\n" +
+                            "        <a href=\"eliminarMensaje.jsp?id=" + m.getId() + "\">Eliminar</a>\n" +
+                            "    </div>\n");
+                    out.print("</div>\n");
+
+                } else if (m.getUsuario().getId() == gestionAPP.getUsuario().getId()) {
+                    // Mensaje propio
+                    out.print("<div class=\"mensaje-wrapper\" data-id=\"" + m.getId() + "\" data-tipo=\"propio\">\n");
+                    out.print("    <div class=\"mensajePropio\">\n" +
+                            "        <p>" + m.getContenido() + "</p>\n" +
+                            "        <p>" + Utilidades.pasarFechaHoraBBDD(m.getFecha()) + "</p>\n" +
+                            "    </div>\n");
+                    out.print("    <div class=\"menuMensajeDropdown\">\n" +
+                            "        <a href=\"eliminarParaTodos.jsp?id=" + m.getId() + "\">Eliminar para todos</a>\n" +
+                            "        <a href=\"eliminarMensaje.jsp?id=" + m.getId() + "\">Eliminar para mi</a>\n");
+                    Duration diferencia = Duration.between(m.getFecha(), LocalDateTime.now());
+                    if (diferencia.toHours() < 24) out.print("        <a href=\"editarMensaje.jsp?id=" + m.getId() + "\">Editar</a>\n");
+                    out.print("    </div>\n");
+                    out.print("</div>\n");
+
+                } else {
+                    // Mensaje de otro usuario
+                    out.print("<div class=\"mensaje-wrapper\" data-id=\"" + m.getId() + "\" data-tipo=\"otro\">\n");
+                    out.print("    <div class=\"mensajeOtroUser\">\n" +
+                            "        <p>" + m.getUsuario().getEmail() + "</p>\n" +
+                            "        <p>" + m.getContenido() + "</p>\n" +
+                            "        <p>" + Utilidades.pasarFechaHoraBBDD(m.getFecha()) + "</p>\n" +
+                            "    </div>\n");
+                    out.print("    <div class=\"menuMensajeDropdown\">\n" +
+                            "        <a href=\"eliminarMensaje.jsp?id=" + m.getId() + "\">Eliminar</a>\n" +
+                            "    </div>\n");
+                    out.print("</div>\n");
+                }
+            }
+        }
+    %>
+    <div id="enviarMensajes">
+        <form action="EnviaMensaje.jsp" method="get">
+            <input type="text" name="mensaje" required>
+            <button>
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 12h13M13 6l6 6-6 6" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </form>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        document.querySelectorAll('.mensaje-wrapper').forEach(function (wrapper) {
+            wrapper.addEventListener('contextmenu', function (event) {
+                event.preventDefault();
+
+                const dropdown = wrapper.querySelector('.menuMensajeDropdown');
+
+                // Cierra cualquier otro menú abierto
+                document.querySelectorAll('.menuMensajeDropdown.activo').forEach(function (el) {
+                    if (el !== dropdown) el.classList.remove('activo');
+                });
+
+                dropdown.classList.toggle('activo');
+            });
+        });
+
+        // Cierra el menú al hacer click en cualquier otro sitio
+        document.addEventListener('click', function () {
+            document.querySelectorAll('.menuMensajeDropdown.activo').forEach(function (el) {
+                el.classList.remove('activo');
+            });
+        });
+    });
+</script>
+
+<script>
+    const chat = document.getElementById("chat");
+
+    function bajarChat() {
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    bajarChat();
+</script>
+
+<script>
+    function comprobarRecarga() {
+        fetch("ProcesarAccion.jsp")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Error en la petición");
+                }
+                return response.text();
+            })
+            .then(resultado => {
+                resultado = resultado.trim();
+
+                // Si devuelve algo, redirigimos
+                if (resultado !== "") {
+                    window.location.href = "UsaChat.jsp";
+                    return;
+                }
+                // Si no devuelve nada, esperamos 2 segundos
+                // y volvemos a intentarlo
+                setTimeout(comprobarRecarga, 2000);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                window.location.href = "Error.jsp";
+            });
+    }
+    // Primera ejecución
+    comprobarRecarga();
+</script>
 <!-- Menú de abajo -->
 <div id="menu">
     <button onclick="window.location.href = 'BorraVariablesBuscar.jsp'">

@@ -159,6 +159,15 @@
                 }
             }
         break;
+        case "comprobarRecargaChats":
+            int totalMensajesSesionSinLeer = (int) session.getAttribute("totalMensajesSinLeer");
+            if (totalMensajesSesionSinLeer != gestionAPP.getTotalMensajesNoLeidos()) out.print("recarga");
+            else out.print("");
+        break;
+        case "comprobarRecargaChat":
+            if (gestionAPP.getMensajesNoLeidos((long) session.getAttribute("idChat")) != 0) out.print("recarga");
+            else out.print("");
+        break;
         default:
             session.setAttribute("error","Error desconocido");
             session.setAttribute("recomendacion","Contacte con el servicio técnico");

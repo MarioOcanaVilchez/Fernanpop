@@ -1,5 +1,6 @@
 package Dao;
 
+import Modelos.Mensaje;
 import Modelos.Producto;
 import Modelos.Usuario;
 import org.mindrot.jbcrypt.BCrypt;
@@ -144,6 +145,21 @@ public class DaoUsuarioSQL implements DaoUsuario{
     public Usuario buscaUsuarioPorProducto(DaoManager dao, Producto p,DaoProductoSQL daoProducto) {
         int id = daoProducto.buscaUsuarioPorProducto(dao,p);
         return buscaUsuarioId(dao,id);
+    }
+    public ArrayList<Mensaje> determinaDuenioMensajes(DaoManager dao,ArrayList<Mensaje> mensajes){
+        for (Mensaje m : mensajes){
+            if (m.getUsuario().getId() != -1) {
+                if (m.getUsuario().getEmail() == null) {
+                    Usuario duenio = buscaUsuarioId(dao, m.getUsuario().getId());
+                    for (Mensaje me : mensajes) {
+                        if (me.getUsuario().getId() == m.getUsuario().getId()) me.setUsuario(duenio);
+                    }
+                }
+            } else {
+                m.getUsuario().setEmail("Administración");
+            }
+        }
+        return mensajes;
     }
 
 
