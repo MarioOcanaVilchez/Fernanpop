@@ -13,10 +13,11 @@
 <head>
     <title>Selector de chat</title>
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
-    <link rel="stylesheet" type="text/css" href="CSS/SeleccionaChat.css">
+    <link rel="stylesheet" type="text/css" href="CSS/SeleccionaChat.css?v=4">
 </head>
 <body>
 <% GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
+    session.setAttribute("paginaActual","SeleccionChats.jsp");
   if (gestionAPP.getUsuario() == null) response.sendRedirect("InicioSesion.jsp");
   session.setAttribute("idChat",null);
   session.setAttribute("accion","comprobarRecargaChats");
@@ -64,8 +65,11 @@
     out.print("</div>");
 %>
 <%
-    session.setAttribute("totalMensajesSinLeer", gestionAPP.getTotalMensajesNoLeidos());
-    ArrayList<Chat> chats = gestionAPP.getChats();
+    ArrayList<Chat> chats = null;
+    if (gestionAPP.getUsuario() != null) {
+        session.setAttribute("totalMensajesSinLeer", gestionAPP.getTotalMensajesNoLeidos());
+        chats = gestionAPP.getChats();
+    }
     if (chats == null || chats.isEmpty()) {
         out.print("<p>No has iniciado ningún chat aún</p>");
     } else {
@@ -86,11 +90,20 @@
                         "                <path d=\"M4.8 19.2c1.2-3.4 4-5.1 7.2-5.1s6 1.7 7.2 5.1c.25.7-.25 1.4-1 1.4H5.8c-.75 0-1.25-.7-1-1.4z\" fill=\"#ffffff\"/>\n" +
                         "            </svg>");
             }
-            out.print("</div>" +
+            if (c.getUltimoMensaje() != null) {
+                if (c.getUltimoMensaje().startsWith(":")) out.print("</div>" +
+                        "<h1>" + c.getNombre() + "</h1>" +
+                        "<p>" + c.getUltimoMensaje().substring(1) + "</p>" +
+                        (c.getMensajesNoLeidos() != 0 ? "<div class=\"numMensajesSinLeer\">" + c.getMensajesNoLeidos() + "</div>" : "") +
+                        "</button>");
+                else out.print("</div>" +
+                        "<h1>" + c.getNombre() + "</h1>" +
+                        "<p>" + c.getUltimoMensaje() + "</p>" +
+                        (c.getMensajesNoLeidos() != 0 ? "<div class=\"numMensajesSinLeer\">" + c.getMensajesNoLeidos() + "</div>" : "") +
+                        (c.getFechaUltimoMensaje() == null ? "" : "<p class=\"fecha\">" + Utilidades.pasarFechaHoraBBDD(c.getFechaUltimoMensaje()) + "</p>") +
+                        "</button>");
+            } else out.print("</div>" +
                     "<h1>" + c.getNombre() + "</h1>" +
-                    "<p>" + c.getUltimoMensaje() + "</p>" +
-                    (c.getMensajesNoLeidos() != 0 ? "<div class=\"numMensajesSinLeer\">" + c.getMensajesNoLeidos() + "</div>" : "") +
-                    (c.getFechaUltimoMensaje() == null ? "" : "<p class=\"fecha\">" + Utilidades.pasarFechaHoraBBDD(c.getFechaUltimoMensaje()) + "</p>") +
                     "</button>");
 
             // Botón de los 3 puntos

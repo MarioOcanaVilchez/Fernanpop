@@ -84,7 +84,7 @@ public class DaoProductoSQL {
         }
     }
     //Metodo que debe englobar todas las posibilidades de busqueda para un usuario registrado
-    public ArrayList<Producto> getPaginaProductos(DaoManager dao,Usuario usuario,DaoTratoSQL daoTrato,ArrayList<Producto> productosActuales,ArrayList<Integer> idProductosSolicitados,String textoBuscar,String orden,int precioMin,int precioMax){
+    public ArrayList<Producto> getPaginaProductos(DaoManager dao,Usuario usuario,DaoTratoSQL daoTrato,ArrayList<Producto> productosActuales,ArrayList<Long> idProductosSolicitados,String textoBuscar,String orden,int precioMin,int precioMax){
         ArrayList<Producto> productos = new ArrayList<>();
         String sentencia = determinarSentenciaUsuarioRegistrado(usuario,productosActuales,idProductosSolicitados,textoBuscar,orden,precioMin,precioMax);
         try {
@@ -100,7 +100,7 @@ public class DaoProductoSQL {
             return null;
         }
     }
-    public String determinarSentenciaUsuarioRegistrado(Usuario usuario,ArrayList<Producto> productosActuales,ArrayList<Integer> idProductosSolicitados,String textoBuscar,String orden,int precioMin,int precioMax){
+    public String determinarSentenciaUsuarioRegistrado(Usuario usuario,ArrayList<Producto> productosActuales,ArrayList<Long> idProductosSolicitados,String textoBuscar,String orden,int precioMin,int precioMax){
         String sentencia = "";
         if (textoBuscar == null){
             switch (orden){
@@ -110,7 +110,7 @@ public class DaoProductoSQL {
                         for (Producto p : productosActuales) {
                             sentencia += p.getId() + ",";
                         }
-                        for (Integer idProducto : idProductosSolicitados){
+                        for (long idProducto : idProductosSolicitados){
                             sentencia += idProducto + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
@@ -119,7 +119,7 @@ public class DaoProductoSQL {
                         sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax + " and id_usuario != " + usuario.getId();
                         if (!idProductosSolicitados.isEmpty()) {
                             sentencia += " and id not in (";
-                            for (Integer idProducto : idProductosSolicitados) {
+                            for (long idProducto : idProductosSolicitados) {
                                 sentencia += idProducto + ",";
                             }
                             sentencia = sentencia.substring(0, sentencia.length() - 1) + ")";
@@ -133,7 +133,7 @@ public class DaoProductoSQL {
                         for (Producto p : productosActuales) {
                             sentencia += p.getId() + ",";
                         }
-                        for (Integer idProducto : idProductosSolicitados){
+                        for (long idProducto : idProductosSolicitados){
                             sentencia += idProducto + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
@@ -142,7 +142,7 @@ public class DaoProductoSQL {
                         sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax + " and id_usuario != " + usuario.getId();
                         if (!idProductosSolicitados.isEmpty()) {
                             sentencia += " and id not in (";
-                            for (Integer idProducto : idProductosSolicitados) {
+                            for (long idProducto : idProductosSolicitados) {
                                 sentencia += idProducto + ",";
                             }
                             sentencia = sentencia.substring(0, sentencia.length() - 1) + ")";
@@ -156,7 +156,7 @@ public class DaoProductoSQL {
                         for (Producto p : productosActuales) {
                             sentencia += p.getId() + ",";
                         }
-                        for (Integer idProducto : idProductosSolicitados){
+                        for (long idProducto : idProductosSolicitados){
                             sentencia += idProducto + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
@@ -165,7 +165,7 @@ public class DaoProductoSQL {
                         sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax + " and id_usuario != " + usuario.getId();
                         if (!idProductosSolicitados.isEmpty()) {
                             sentencia += " and id not in (";
-                            for (Integer idProducto : idProductosSolicitados) {
+                            for (long idProducto : idProductosSolicitados) {
                                 sentencia += idProducto + ",";
                             }
                             sentencia = sentencia.substring(0, sentencia.length() - 1) + ")";
@@ -182,7 +182,7 @@ public class DaoProductoSQL {
                         for (Producto p : productosActuales) {
                             sentencia += p.getId() + ",";
                         }
-                        for (Integer idProducto : idProductosSolicitados){
+                        for (long idProducto : idProductosSolicitados){
                             sentencia += idProducto + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
@@ -191,7 +191,7 @@ public class DaoProductoSQL {
                         sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax + " and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') and id_usuario != " + usuario.getId();
                         if (!idProductosSolicitados.isEmpty()) {
                             sentencia += " and id not in (";
-                            for (Integer idProducto : idProductosSolicitados) {
+                            for (long idProducto : idProductosSolicitados) {
                                 sentencia += idProducto + ",";
                             }
                             sentencia = sentencia.substring(0, sentencia.length() - 1) + ")";
@@ -205,7 +205,7 @@ public class DaoProductoSQL {
                         for (Producto p : productosActuales) {
                             sentencia += p.getId() + ",";
                         }
-                        for (Integer idProducto : idProductosSolicitados){
+                        for (long idProducto : idProductosSolicitados){
                             sentencia += idProducto + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
@@ -214,7 +214,7 @@ public class DaoProductoSQL {
                         sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax + " and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') and id_usuario != " + usuario.getId();
                         if (!idProductosSolicitados.isEmpty()) {
                             sentencia += " and id not in (";
-                            for (Integer idProducto : idProductosSolicitados) {
+                            for (long idProducto : idProductosSolicitados) {
                                 sentencia += idProducto + ",";
                             }
                             sentencia = sentencia.substring(0, sentencia.length() - 1) + ")";
@@ -228,7 +228,7 @@ public class DaoProductoSQL {
                         for (Producto p : productosActuales) {
                             sentencia += p.getId() + ",";
                         }
-                        for (Integer idProducto : idProductosSolicitados){
+                        for (long idProducto : idProductosSolicitados){
                             sentencia += idProducto + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
@@ -237,7 +237,7 @@ public class DaoProductoSQL {
                         sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax + " and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') and id_usuario != " + usuario.getId();
                         if (!idProductosSolicitados.isEmpty()) {
                             sentencia += " and id not in (";
-                            for (Integer idProducto : idProductosSolicitados) {
+                            for (long idProducto : idProductosSolicitados) {
                                 sentencia += idProducto + ",";
                             }
                             sentencia = sentencia.substring(0, sentencia.length() - 1) + ")";
@@ -546,6 +546,41 @@ public class DaoProductoSQL {
             return idDuenioProducto == uTemp.getId();
         } catch (SQLException e) {
             return false;
+        }
+    }
+    public long getProductoAleatorio(DaoManager dao,DaoTratoSQL daoTrato,Usuario uTemp){
+        String sentencia;
+        if (uTemp == null){
+            sentencia = "select * from producto where enVenta=true order by rand() limit 1";
+            try {
+                dao.open();
+                Statement stmt = dao.getConexion().createStatement();
+                ResultSet rs = stmt.executeQuery(sentencia);
+                rs.next();
+                return rs.getLong("id");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            ArrayList<Long> idsProductosSolicitados = daoTrato.productosVentasPendientesConParametros(dao,uTemp);
+            sentencia = "select * from producto where enVenta=true and id_usuario!=" + uTemp.getId();
+            if (idsProductosSolicitados != null && !idsProductosSolicitados.isEmpty()) {
+                sentencia += " and id not in(";
+                for (long id : idsProductosSolicitados) {
+                    sentencia += id + ",";
+                }
+                sentencia = sentencia.substring(0,sentencia.length() - 1) +  ")";
+            }
+            sentencia += " order by rand()";
+            try {
+                dao.open();
+                Statement stmt = dao.getConexion().createStatement();
+                ResultSet rs = stmt.executeQuery(sentencia);
+                rs.next();
+                return rs.getLong("id");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

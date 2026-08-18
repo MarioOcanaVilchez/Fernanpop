@@ -1,10 +1,7 @@
 package Controller;
 
 import Dao.*;
-import Modelos.Chat;
-import Modelos.Producto;
-import Modelos.Trato;
-import Modelos.Usuario;
+import Modelos.*;
 import Persistencia.Persistencia;
 import Utilidades.Comunicaciones;
 import Utilidades.PlantillasCorreo;
@@ -136,9 +133,8 @@ public class GestionAPP {
     public ArrayList<Producto> buscaProductoTexto(String titulo){
         return daoProducto.buscaProductoPorTexto(dao,titulo,usuario,daoTrato);
     }
-    public Producto getProductoAleatorio(ArrayList<Producto> productos){
-        int pos = (int) (Math.random() * productos.size());
-        return productos.get(pos);
+    public long getProductoAleatorio(){
+        return daoProducto.getProductoAleatorio(dao,daoTrato,usuario);
     }
     //Borra un usuario
     public boolean borrarUsuario(){
@@ -346,6 +342,9 @@ public class GestionAPP {
         if (chat != null) daoMensaje.leeMensajesChat(dao,chat.getId(),usuario);
         return chat;
     }
+    public boolean marcarMensajesLeidos(long idChat){
+        return daoMensaje.leeMensajesChat(dao,idChat,usuario);
+    }
     public long buscaChat(int idUser){
         return daoChat.buscaChat(dao,usuario,idUser);
     }
@@ -369,7 +368,7 @@ public class GestionAPP {
     public boolean enviarMensaje(long idChat,String mensaje){
         Usuario [] usuarios = daoChat.getUsuariosChat(dao,daoUsuario,idChat);
         if (daoMensaje.insertaMensaje(dao,mensaje,idChat,usuarios,LocalDateTime.now(),usuario.getId())){
-            daoChat.actualizaUltimoMensaje(dao,mensaje,LocalDateTime.now(),usuario);
+            daoChat.actualizaUltimoMensaje(dao,LocalDateTime.now(),idChat);
             return true;
         }
         return false;
@@ -394,13 +393,22 @@ public class GestionAPP {
         return daoBloqueo.userBloqueado(dao,idUser,usuario.getId());
     }
     public boolean bloqueaUser(int idUser){
-        return daoBloqueo.bloqueaUser(dao,usuario.getId(),idUser);
+        return daoBloqueo.bloqueaUser(dao,daoMensaje,usuario.getId(),idUser,buscaChat(idUser));
     }
     public boolean desbloquearUser(int idUser){
         return daoBloqueo.desbloquearUser(dao,usuario.getId(),idUser);
     }
     public boolean enviarMensajeDeBloqueado(long idChat,String mensaje){
         return daoMensaje.insertaMensajeDeBloqueado(dao,mensaje,idChat,LocalDateTime.now(),usuario.getId());
+    }
+    public boolean vaciarChat(long idChat){
+        return daoMensaje.eliminaMensajes(dao,idChat,usuario.getId());
+    }
+    public Mensaje buscaMensaje(long idChat,long idMensaje){
+        return daoMensaje.buscaMensaje(dao,idChat,idMensaje,usuario);
+    }
+    public boolean actualizaMensaje(long idChat,long idMensaje,String nuevoMensaje){
+        return daoMensaje.actualizaMensaje(dao,idChat,idMensaje,nuevoMensaje,usuario);
     }
 
 }

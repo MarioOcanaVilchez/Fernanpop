@@ -7,12 +7,14 @@ public class Mensaje {
     private String contenido;
     private Usuario usuario;
     private LocalDateTime fecha;
+    private boolean eliminado;
 
-    public Mensaje(long id, String contenido, Usuario usuario, LocalDateTime fecha) {
+    public Mensaje(long id, String contenido, Usuario usuario, LocalDateTime fecha,boolean eliminado) {
         this.id = id;
         this.contenido = contenido;
         this.usuario = usuario;
         this.fecha = fecha;
+        this.eliminado = eliminado;
     }
 
     public long getId() {
@@ -45,5 +47,13 @@ public class Mensaje {
 
     public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
+    }
+
+    public boolean isEliminado() {
+        return eliminado;
+    }
+
+    public void setEliminado(boolean eliminado) {
+        this.eliminado = eliminado;
     }
 }

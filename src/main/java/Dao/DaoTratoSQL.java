@@ -262,7 +262,7 @@ public class DaoTratoSQL {
             return 0;
         }
     }
-    //
+    //devuelve el número de productos has solicitado en ciertos parametros
     public int ventasPendientesConParametros(DaoManager dao,DaoProductoSQL daoProducto,Usuario uTemp,String textoBuscar , int precioMin , int precioMax){
         ArrayList<Integer> idsProductos = new ArrayList<>();
         String sentencia = "select * from trato where idOtroUser = " + uTemp.getId() + " and tipo = 'VentaPendiente'";
@@ -281,15 +281,15 @@ public class DaoTratoSQL {
         }
     }
     //devuelve el id del producto el cual el usuario tenga una ventaPendiente
-    public ArrayList<Integer> productosVentasPendientesConParametros(DaoManager dao,Usuario uTemp){
-        ArrayList<Integer> idsProductos = new ArrayList<>();
+    public ArrayList<Long> productosVentasPendientesConParametros(DaoManager dao,Usuario uTemp){
+        ArrayList<Long> idsProductos = new ArrayList<>();
         String sentencia = "select * from trato where idOtroUser = " + uTemp.getId() + " and tipo = 'VentaPendiente'";
         try {
             dao.open();
             Statement stmp = dao.getConexion().createStatement();
             ResultSet rs = stmp.executeQuery(sentencia);
             while (rs.next()){
-                idsProductos.add(rs.getInt("idProducto"));
+                idsProductos.add(rs.getLong("idProducto"));
             }
             dao.close();
             return idsProductos;

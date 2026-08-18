@@ -22,9 +22,17 @@
             gestionAPP.cambiaApel(valor);
             break;
         case "email":
-            gestionAPP.cambiaEmail(valor);
+            if (gestionAPP.buscaMail(valor) == null){
+                gestionAPP.cambiaEmail(valor);
+                response.sendRedirect("Perfil.jsp");
+            }
+            else {
+                session.setAttribute("error","Error al actualizar el correo");
+                session.setAttribute("recomendacion","Correo en uso por otro usuario");
+                response.sendRedirect("Error.jsp");
+            }
             break;
     }
     session.setAttribute("controller",gestionAPP);
-    response.sendRedirect("Perfil.jsp");
+    if (!campo.equals("email")) response.sendRedirect("Perfil.jsp");
 %>

@@ -23,13 +23,14 @@ public class DaoBloqueoSQL {
             return true;
         }
     }
-    public boolean bloqueaUser(DaoManager dao,int idUserBloquea,int idUserBloqueado){
+    public boolean bloqueaUser(DaoManager dao,DaoMensajeSQL daoMensaje,int idUserBloquea,int idUserBloqueado,long idChat){
         String sentencia = "insert into bloqueos values(" + idUserBloquea + ","  + idUserBloqueado + ")";
         try {
             dao.open();
             Statement stmt = dao.getConexion().createStatement();
             stmt.executeUpdate(sentencia);
             dao.close();
+            daoMensaje.enviaMensajeBloqueo(dao,idChat,idUserBloquea,idUserBloqueado);
             return true;
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -1,6 +1,5 @@
 package Dao;
 
-import Modelos.Chat;
 import Modelos.Mensaje;
 import Modelos.Usuario;
 import Utilidades.Utilidades;
@@ -20,7 +19,7 @@ public class DaoMensajeSQL {
             Statement stmt = dao.getConexion().createStatement();
             stmt.executeUpdate(sentencia);
             for (Usuario u: usuarios){
-                sentencia = "insert into mensajesUser values (" + idMensaje + ",'" + contenido + "'," + idChat + "," + idUserEnvia + ",'" + Utilidades.pasarFechaHoraBBDD(fecha) + "'," + u.getId() + "," + ((idUserEnvia == u.getId())) + ")";
+                sentencia = "insert into mensajesUser values (" + idMensaje + ",'" + contenido + "'," + idChat + "," + idUserEnvia + ",'" + Utilidades.pasarFechaHoraBBDD(fecha) + "'," + u.getId() + "," + ((idUserEnvia == u.getId())) + ",false)";
                 stmt.executeUpdate(sentencia);
             }
             dao.close();
@@ -36,7 +35,7 @@ public class DaoMensajeSQL {
             dao.open();
             Statement stmt = dao.getConexion().createStatement();
             stmt.executeUpdate(sentencia);
-            sentencia = "insert into mensajesUser values (" + idMensaje + ",'" + contenido + "'," + idChat + "," + idUserEnvia + ",'" + Utilidades.pasarFechaHoraBBDD(fecha) + "'," + idUserEnvia + ",true)";
+            sentencia = "insert into mensajesUser values (" + idMensaje + ",'" + contenido + "'," + idChat + "," + idUserEnvia + ",'" + Utilidades.pasarFechaHoraBBDD(fecha) + "'," + idUserEnvia + ",true,false)";
             stmt.executeUpdate(sentencia);
 
             dao.close();
@@ -68,6 +67,40 @@ public class DaoMensajeSQL {
             throw new RuntimeException(e);
         }
     }
+    public Mensaje buscaMensaje(DaoManager dao,long idChat,long id,Usuario uTemp){
+        String sentenca = "select * from mensajesChat where idChat=" + idChat + " and id=" + id;
+        try {
+            dao.open();
+            Statement stmt = dao.getConexion().createStatement();
+            ResultSet rs = stmt.executeQuery(sentenca);
+            if (rs.next()){
+                Mensaje mensaje = new Mensaje(id,rs.getString("mensaje"),uTemp,Utilidades.pasarFechaHoraLocaldate(rs.getString("fecha")),false);
+                dao.close();
+                return mensaje;
+            }
+            dao.close();
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean actualizaMensaje(DaoManager dao,long idChat,long idMensaje,String nuevoMensaje,Usuario uTemp){
+        Mensaje mensaje = buscaMensaje(dao,idChat,idMensaje,uTemp);
+        if (mensaje == null) return false;
+        String sentencia = "update mensajesUser set mensaje='" + nuevoMensaje + "' where idChat=" + idChat + " and id=" + idMensaje;
+        try {
+            dao.open();
+            Statement stmt = dao.getConexion().createStatement();
+            stmt.executeUpdate(sentencia);
+            nuevoMensaje = mensaje.getContenido() + " fue editado a " + nuevoMensaje;
+            sentencia = "update mensajesChat set mensaje='" + nuevoMensaje + "' where idChat=" + idChat + " and id=" + idMensaje;
+            stmt.executeUpdate(sentencia);
+            dao.close();
+            return true;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public ArrayList<Mensaje> cargaMensajes(DaoManager dao,DaoUsuarioSQL daoUsuario,Usuario uTemp,long idChat){
         ArrayList<Mensaje> mensajes = new ArrayList<>();
         LocalDateTime fecha;
@@ -79,7 +112,7 @@ public class DaoMensajeSQL {
             while (rs.next()){
                 if (rs.getString("fecha") == null) fecha = null;
                 else fecha = Utilidades.pasarFechaHoraLocaldate(rs.getString("fecha"));
-                mensajes.add(new Mensaje(rs.getLong("id"),rs.getString("mensaje"),new Usuario(rs.getInt("idUserEnvia")),fecha));
+                mensajes.add(new Mensaje(rs.getLong("id"),rs.getString("mensaje"),new Usuario(rs.getInt("idUserEnvia")),fecha,rs.getBoolean("eliminado")));
             }
             dao.close();
             mensajes = daoUsuario.determinaDuenioMensajes(dao,mensajes);
@@ -94,7 +127,7 @@ public class DaoMensajeSQL {
             dao.open();
             Statement stmt = dao.getConexion().createStatement();
             for (Usuario u : usuarios){
-                String sentencia = "insert into mensajesUser values (" + idMensaje + ",'" + mensaje + "'," + idChat + ",-1,null," + u.getId() + ",false)";
+                String sentencia = "insert into mensajesUser values (" + idMensaje + ",'" + mensaje + "'," + idChat + ",-1,'" + Utilidades.pasarFechaHoraBBDD(LocalDateTime.now()) + "'," + u.getId() + ",false,false)";
                 stmt.executeUpdate(sentencia);
             }
             dao.close();
@@ -133,15 +166,16 @@ public class DaoMensajeSQL {
             throw new RuntimeException(e);
         }
     }
-    public void leeMensajesChat(DaoManager dao,long idChat,Usuario usuario){
+    public boolean leeMensajesChat(DaoManager dao,long idChat,Usuario usuario){
         String sentencia = "update mensajesUser set leido=true where idChat=" + idChat + " and idUserRecibe=" + usuario.getId();
         try {
             dao.open();
             Statement stmt = dao.getConexion().createStatement();
             stmt.executeUpdate(sentencia);
             dao.close();
+            return true;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return false;
         }
     }
     public boolean eliminaMensaje(DaoManager dao,long idChat,long idMensaje,Usuario uTemp){
@@ -157,7 +191,7 @@ public class DaoMensajeSQL {
         }
     }
     public boolean eliminaContenidoMensaje(DaoManager dao,long idChat,long idMensaje){
-        String sentencia = "update mensajesUser set mensaje='⊘ Mensaje elimminado' where id=" + idMensaje + " and idChat=" + idChat;
+        String sentencia = "update mensajesUser set mensaje='⊘ Mensaje elimminado',eliminado=true where id=" + idMensaje + " and idChat=" + idChat;
         try {
             dao.open();
             Statement stmt = dao.getConexion().createStatement();
@@ -166,6 +200,37 @@ public class DaoMensajeSQL {
             return true;
         } catch (SQLException e) {
             return false;
+        }
+    }
+    public boolean enviaMensajeBloqueo(DaoManager dao,long idChat,int idUserBloquea,int idUserBloqueado){
+        long id = generaId(dao,idChat);
+        String mensaje = idUserBloquea + " bloqueo a " + idUserBloqueado;
+        String sentencia = "insert into mensajesChat values(" + id + ",'" + mensaje + "'," + idChat + ",-1,'" + Utilidades.pasarFechaHoraBBDD(LocalDateTime.now()) + "')";
+        try {
+            dao.open();
+            Statement stmt = dao.getConexion().createStatement();
+            stmt.executeUpdate(sentencia);
+            mensaje = "Este contacto te bloqueo";
+            sentencia = "insert into mensajesUser values(" + id + ",'" + mensaje + "'," + idChat + ",-1,'" + Utilidades.pasarFechaHoraBBDD(LocalDateTime.now()) + "'," + idUserBloqueado + ",false,false )";
+            stmt.executeUpdate(sentencia);
+            mensaje = "Bloqueaste a este contacto";
+            sentencia = "insert into mensajesUser values(" + id + ",'" + mensaje + "'," + idChat + ",-1,'" + Utilidades.pasarFechaHoraBBDD(LocalDateTime.now()) + "'," + idUserBloquea + ",true,false )";
+            stmt.executeUpdate(sentencia);
+            return true;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean eliminaMensajes(DaoManager dao,long idChat,int idUser){
+        String sentencia = "delete from mensajesUser where idChat=" + idChat + " and idUserRecibe=" + idUser;
+        try {
+            dao.open();
+            Statement stmt = dao.getConexion().createStatement();
+            stmt.executeUpdate(sentencia);
+            dao.close();
+            return true;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

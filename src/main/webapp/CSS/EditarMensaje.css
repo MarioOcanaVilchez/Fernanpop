@@ -154,6 +154,150 @@ img {
     font-style: italic;
 }
 
+/* ===== Encabezado de contexto ===== */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+
+/* ===== Vista previa del mensaje a editar ===== */
+
+
+.mensaje-anterior p {
+    margin: 0;
+    color: var(--texto-principal);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.mensaje-anterior p:last-child {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--texto-secundario);
+}
+
+/* ===== Título dentro de la tarjeta ===== */
+form h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin: 0;
+}
+
+/* ===== Burbuja del mensaje anterior, dentro de la tarjeta ===== */
+form .mensaje-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+form .mensajePropio {
+    position: relative;
+    background-color: var(--verde);
+    color: var(--blanco);
+    border-radius: var(--radio-medio);
+    border-bottom-right-radius: 4px;
+    padding: 8px 12px;
+    max-width: 75%;
+    font-size: 14px;
+    box-shadow: var(--sombra-card);
+}
+
+form .mensajePropio p {
+    margin: 0;
+}
+
+form .mensajePropio p:first-child {
+    margin-bottom: 3px;
+}
+
+form .mensajePropio p:last-child {
+    font-size: 10px;
+    opacity: 0.7;
+    margin-top: 4px;
+    text-align: right;
+}
+
+form .mensajePropio::after {
+    content: "";
+    position: absolute;
+    right: -7px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border: 7px solid transparent;
+    border-left-color: var(--verde);
+    border-bottom: 0;
+    border-right: 0;
+}
+/* ===== Formulario de edición ===== */
+form {
+    width: 100%;
+    max-width: 480px;
+    margin: 22px auto;
+    padding: 26px 22px 30px;
+    background-color: var(--blanco);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-card);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    transition: box-shadow 0.2s ease;
+}
+
+form:hover {
+    box-shadow: var(--sombra-card-hover);
+}
+
+form input[type="text"] {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--texto-principal);
+    background-color: var(--gris-fondo);
+    border: 1.5px solid transparent;
+    border-radius: var(--radio-medio);
+    padding: 13px 16px;
+    outline: none;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+form input[type="text"]::placeholder {
+    color: var(--texto-secundario);
+}
+
+form input[type="text"]:focus {
+    border-color: var(--verde);
+    background-color: var(--blanco);
+    box-shadow: 0 0 0 3px var(--verde-suave);
+}
+
+form input[type="submit"] {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--blanco);
+    background-color: var(--verde);
+    border: none;
+    border-radius: var(--radio-pill);
+    padding: 14px 0;
+    margin-top: 6px;
+    box-shadow: 0 6px 16px rgba(39, 174, 96, 0.35);
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+form input[type="submit"]:hover {
+    background-color: var(--verde-oscuro);
+    transform: translateY(-2px);
+}
+
+form input[type="submit"]:active {
+    transform: translateY(0);
+}
+
+
 #menu {
     position: fixed;
     bottom: 0;
@@ -240,209 +384,3 @@ img {
     height: 22px;
     transform: translate(-50%, -50%);
 }
-
-body > p {
-    text-align: center;
-    color: var(--texto-secundario);
-    font-size: 14px;
-    margin: 30px auto;
-}
-
-.chat {
-    position: relative; /* clave para posicionar el menú respecto a este contenedor */
-    display: flex;
-    align-items: center;
-}
-
-.btn-menu-chat {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 6px;
-    border-radius: 50%;
-    color: #555;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-menu-chat:hover {
-    background-color: rgba(0, 0, 0, 0.08);
-}
-
-.menuChat {
-    position: absolute;
-    top: 36px;
-    right: 0;
-    min-width: 140px;
-    background-color: var(--blanco);
-    border-radius: var(--radio-medio);
-    box-shadow: var(--sombra-card-hover);
-    overflow: hidden;
-    z-index: 100;
-
-    display: flex;
-    flex-direction: column;
-
-    opacity: 0;
-    transform: translateY(-6px);
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
-}
-
-.menuChat.show {
-    opacity: 1;
-    transform: translateY(0);
-    visibility: visible;
-    pointer-events: auto;
-}
-
-.menuChat a {
-    padding: 10px 14px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--texto-principal);
-    text-decoration: none;
-    transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.menuChat a:hover {
-    background-color: var(--verde-suave);
-    color: var(--verde-oscuro);
-}
-
-
-/* ---- Contenedor de cada chat: uno debajo del otro, ancho completo ---- */
-.chat {
-    width: 100%;
-    padding: 12px 16px;
-    background-color: var(--blanco);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-/* El primer botón (el que contiene avatar, h1, p, etc.) ocupa todo el ancho
-   disponible y organiza su contenido en una rejilla de 3 columnas x 2 filas */
-.chat > button:first-child {
-    display: grid;
-    grid-template-columns: 52px 1fr auto;
-    grid-template-rows: auto auto;
-    column-gap: 12px;
-    row-gap: 2px;
-    align-items: center;
-    width: 100%;
-    text-align: left;
-    padding: 0;
-}
-
-/* Avatar: pegado a la izquierda, redondeado, ocupa las dos filas */
-.chat .avatar-perfil {
-    grid-row: 1 / 3;
-    grid-column: 1;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--blanco);
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 18px;
-    flex-shrink: 0;
-}
-
-/* Nombre: grande, al lado del avatar, fila superior */
-.chat h1 {
-    grid-row: 1;
-    grid-column: 2;
-    font-size: 17px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Último mensaje: justo debajo del h1 */
-.chat p:not(.fecha) {
-    grid-row: 2;
-    grid-column: 2;
-    margin: 0;
-    font-size: 13px;
-    color: var(--texto-secundario);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Fecha: fila superior, columna derecha, pegada a la derecha (al lado del h1) */
-.chat .fecha {
-    grid-row: 1;
-    grid-column: 3;
-    justify-self: end;
-    margin: 0;
-    font-size: 11px;
-    color: var(--texto-secundario);
-    white-space: nowrap;
-}
-
-/* Contador de mensajes sin leer: fila inferior, columna derecha,
-   redondeado, fondo verde, letra blanca */
-.chat .numMensajesSinLeer {
-    grid-row: 2;
-    grid-column: 3;
-    justify-self: end;
-    background-color: var(--verde);
-    color: var(--blanco);
-    border-radius: var(--radio-pill);
-    min-width: 20px;
-    height: 20px;
-    padding: 0 6px;
-    font-size: 11px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Botón de los 3 puntos: pegado del todo a la derecha del div .chat */
-.chat {
-    display: flex;
-    align-items: center;
-}
-
-.chat .btn-menu-chat {
-    margin-left: 8px;
-    flex-shrink: 0;
-}
-
-
-
-/* parte antigua del menú
-.menuChat {
-    display: none; /* oculto por defecto
-position: absolute;
-top: 100%;
-right: 8px;
-background: #fff;
-border-radius: 8px;
-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-min-width: 180px;
-z-index: 100;
-flex-direction: column;
-overflow: hidden;
-}
-
-.menuChat.show {
-    display: flex;
-}
-.menuChat a {
-    padding: 10px 14px;
-    text-decoration: none;
-    color: #333;
-    font-size: 14px;
-}
-.menuChat a:hover {
-    background-color: #f2f2f2;
-}
- */

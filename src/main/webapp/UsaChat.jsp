@@ -15,11 +15,12 @@
 <head>
     <title>Title</title>
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
-    <link rel="stylesheet" type="text/css" href="CSS/UsaChat.css?v=4">
+    <link rel="stylesheet" type="text/css" href="CSS/UsaChat.css?v=11">
 </head>
 <body>
 <%
     GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
+    session.setAttribute("paginaActual","UsaChat.jsp");
     // Paleta de colores estilo Google
     String[] coloresAvatar = {
             "#e53935", "#8e24aa", "#3949ab", "#1e88e5",
@@ -63,7 +64,7 @@
 <%
     if (session.getAttribute("idChat") == null) session.setAttribute("idChat",Long.parseLong(request.getParameter("idChat")));
     long idChat = (long) session.getAttribute("idChat");
-    Chat chat =gestionAPP.recargaChat(idChat);
+    Chat chat = gestionAPP.recargaChat(idChat);
     session.setAttribute("accion","comprobarRecargaChat");
 %>
 <div id="cabeceraChat">
@@ -91,8 +92,41 @@
         out.print("</div>" +
                 "<h1>" + chat.getNombre() + "</h1>");
 
+        //tres puntos
+        // Botón de los 3 puntos
+        out.print("<button class=\"btn-menu-chat\" onclick=\"toggleMenuChat(event, this)\">" +
+                "<svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"currentColor\">" +
+                "<circle cx=\"12\" cy=\"5\" r=\"2\"/>" +
+                "<circle cx=\"12\" cy=\"12\" r=\"2\"/>" +
+                "<circle cx=\"12\" cy=\"19\" r=\"2\"/>" +
+                "</svg>" +
+                "</button>");
+
+        out.print("<div class=\"menuChat\">\n" +
+                "    <a href=\"VaciaChat.jsp?idChat=" + chat.getId() + "\">Vaciar chat</a>\n");
+        if (!gestionAPP.userBloqueado(chat.getOtroUsuario().getId())) out.print("    <a href=\"BloqueaUser.jsp?idUser=" + chat.getOtroUsuario().getId() + "\">Bloquear</a>\n");
+        else out.print("    <a href=\"DesbloquearUser.jsp?idUser=" + chat.getOtroUsuario().getId() + "\">Desbloquear</a>\n");
+        out.print("</div>");
+
     %>
 </div>
+<script>
+    function toggleMenuChat(event, btn) {
+        // Evita que el clic se propague y dispare el listener de "clic fuera"
+        event.stopPropagation();
+
+        const menu = btn.parentElement.querySelector('.menuChat');
+        menu.classList.toggle('show');
+    }
+
+    // Cierra el menú si se hace clic fuera de él
+    document.addEventListener('click', function (event) {
+        const menuAbierto = document.querySelector('.menuChat.show');
+        if (menuAbierto && !menuAbierto.contains(event.target) && !event.target.closest('.btn-menu-chat')) {
+            menuAbierto.classList.remove('show');
+        }
+    });
+</script>
 <div id="chat">
     <%
         if (chat.getMensajes() == null || chat.getMensajes().isEmpty()){
@@ -118,11 +152,11 @@
                             "        <p>" + m.getContenido() + "</p>\n" +
                             "        <p>" + Utilidades.pasarFechaHoraBBDD(m.getFecha()) + "</p>\n" +
                             "    </div>\n");
-                    out.print("    <div class=\"menuMensajeDropdown\">\n" +
-                            "        <a href=\"eliminarParaTodos.jsp?id=" + m.getId() + "\">Eliminar para todos</a>\n" +
-                            "        <a href=\"eliminarMensaje.jsp?id=" + m.getId() + "\">Eliminar para mi</a>\n");
+                    out.print("    <div class=\"menuMensajeDropdown\">\n");
+                    if (!m.isEliminado()) out.print("        <a href=\"eliminarParaTodos.jsp?id=" + m.getId() + "\">Eliminar para todos</a>\n");
+                    out.print("        <a href=\"eliminarMensaje.jsp?id=" + m.getId() + "\">Eliminar para mi</a>\n");
                     Duration diferencia = Duration.between(m.getFecha(), LocalDateTime.now());
-                    if (diferencia.toHours() < 24) out.print("        <a href=\"editarMensaje.jsp?id=" + m.getId() + "\">Editar</a>\n");
+                    if (diferencia.toHours() < 24 && !m.isEliminado()) out.print("        <a href=\"editarMensaje.jsp?id=" + m.getId() + "\">Editar</a>\n");
                     out.print("    </div>\n");
                     out.print("</div>\n");
 
@@ -156,6 +190,44 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
+        function calcularDireccionMenu(wrapper, dropdown) {
+            const chat = document.getElementById('chat');
+            const chatRect = chat.getBoundingClientRect();
+            const wrapperRect = wrapper.getBoundingClientRect();
+            const alturaMenu = dropdown.offsetHeight;
+            const margen = 8; // pequeño colchón de seguridad
+
+            const espacioArriba = wrapperRect.top - chatRect.top;
+            const espacioAbajo = chatRect.bottom - wrapperRect.bottom;
+
+            const tipo = wrapper.dataset.tipo;
+            const direccionPreferida = (tipo === 'admin') ? 'abajo' : 'arriba';
+
+            let direccionFinal;
+
+            if (direccionPreferida === 'arriba') {
+                if (espacioArriba >= alturaMenu + margen) {
+                    direccionFinal = 'arriba';
+                } else if (espacioAbajo >= alturaMenu + margen) {
+                    direccionFinal = 'abajo';
+                } else {
+                    // No cabe entero en ningún lado: se elige el que tenga más espacio
+                    direccionFinal = (espacioArriba >= espacioAbajo) ? 'arriba' : 'abajo';
+                }
+            } else {
+                if (espacioAbajo >= alturaMenu + margen) {
+                    direccionFinal = 'abajo';
+                } else if (espacioArriba >= alturaMenu + margen) {
+                    direccionFinal = 'arriba';
+                } else {
+                    direccionFinal = (espacioAbajo >= espacioArriba) ? 'abajo' : 'arriba';
+                }
+            }
+
+            dropdown.classList.remove('menu-arriba', 'menu-abajo');
+            dropdown.classList.add('menu-' + direccionFinal);
+        }
+
         document.querySelectorAll('.mensaje-wrapper').forEach(function (wrapper) {
             wrapper.addEventListener('contextmenu', function (event) {
                 event.preventDefault();
@@ -166,6 +238,9 @@
                 document.querySelectorAll('.menuMensajeDropdown.activo').forEach(function (el) {
                     if (el !== dropdown) el.classList.remove('activo');
                 });
+
+                // Calcula la dirección ANTES de mostrarlo
+                calcularDireccionMenu(wrapper, dropdown);
 
                 dropdown.classList.toggle('activo');
             });

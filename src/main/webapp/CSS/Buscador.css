@@ -8,6 +8,8 @@
     --gris-fondo: #f4f6f5;
     --texto-principal: #1c1c1c;
     --texto-secundario: #6b6b6b;
+    --azul: #2980b9;
+    --azul-oscuro: #21618c;
 
     --radio-grande: 22px;
     --radio-medio: 14px;
@@ -372,6 +374,44 @@ form input[type="radio"]:checked {
 
 form input[type="radio"]:checked::before {
     transform: scale(1);
+}
+
+form .btn-suerte {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--blanco);
+    background-color: var(--azul);
+    border: none;
+    border-radius: var(--radio-pill);
+    padding: 14px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(41, 128, 185, 0.35);
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+form .btn-suerte:hover {
+    background-color: var(--azul-oscuro);
+    transform: translateY(-2px);
+}
+
+form .btn-suerte:active {
+    transform: translateY(0);
+}
+
+form .btn-suerte svg {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+}
+
+form .btn-suerte svg * {
+    stroke: currentColor;
+    vector-effect: non-scaling-stroke;
 }
 
 form input[type="submit"] {

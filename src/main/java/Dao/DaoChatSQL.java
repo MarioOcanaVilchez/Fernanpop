@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class DaoChatSQL {
     public boolean crearChat(DaoManager dao, Usuario[] usuarios){
         long idChat = generaId(dao);
-        String sentencia = "insert into chat values (" + idChat + ",null,'')";
+        String sentencia = "insert into chat values (" + idChat + ",'" + Utilidades.pasarFechaHoraBBDD(LocalDateTime.now()) + "')";
         try {
             dao.open();
             Statement stmt = dao.getConexion().createStatement();
@@ -28,9 +28,8 @@ public class DaoChatSQL {
             return false;
         }
     }
-    public boolean actualizaUltimoMensaje(DaoManager dao,String ultimoMensaje,LocalDateTime fecha,Usuario userEnvia){
-        ultimoMensaje = userEnvia.getEmail() + ": " + ultimoMensaje;
-        String sentencia = "update chat set ultimoMensaje='" + ultimoMensaje + "', fechaUltimoMensaje='" + Utilidades.pasarFechaHoraBBDD(fecha) + "'";
+    public boolean actualizaUltimoMensaje(DaoManager dao,LocalDateTime fecha,long idChat){
+        String sentencia = "update chat set fechaUltimoMensaje='" + Utilidades.pasarFechaHoraBBDD(fecha) + "' where id=" + idChat;
         try {
             dao.open();
             Statement stmt = dao.getConexion().createStatement();
@@ -93,10 +92,10 @@ public class DaoChatSQL {
             }
             dao.close();
             for (long id : ids){
-                String ultimoMensaje;
+                String ultimoMensaje = null;
                 Usuario [] usuarios = new Usuario[2];
                 usuarios[0] = uTemp;
-                LocalDateTime fecha;
+                LocalDateTime fecha = null;
                 int idUser = 0;
                 dao.open();
                 sentencia = "select * from chatUsuario where idChat=" + id;
@@ -105,13 +104,21 @@ public class DaoChatSQL {
                 while (rs.next()){
                     if (rs.getInt("idUser") != uTemp.getId()) idUser = rs.getInt("idUser");
                 }
-                sentencia = "select * from chat where id =" + id;
+                sentencia = "select * from mensajesUser where idChat=" + id + " and idUserRecibe=" + uTemp.getId() + " order by fecha desc limit 1";
                 rs = stmt.executeQuery(sentencia);
-                rs.next();
-                if (rs.getString("fechaUltimoMensaje") != null) fecha = Utilidades.pasarFechaHoraLocaldate(rs.getString("fechaUltimoMensaje"));
-                else fecha = null;
-                ultimoMensaje = rs.getString("ultimoMensaje");
+                if (rs.next()){
+                    ultimoMensaje = rs.getString("mensaje");
+                    ultimoMensaje = rs.getInt("idUserEnvia") + ":" + ultimoMensaje;
+                    fecha = Utilidades.pasarFechaHoraLocaldate(rs.getString("fecha"));
+                }
                 dao.close();
+                if (ultimoMensaje != null) {
+                    String usuarioDuenioUltimoMensaje = ultimoMensaje.substring(0, ultimoMensaje.indexOf(':'));
+                    if (Integer.parseInt(usuarioDuenioUltimoMensaje) == uTemp.getId()) usuarioDuenioUltimoMensaje = "Tú";
+                    else if (Integer.parseInt(usuarioDuenioUltimoMensaje) != -1) usuarioDuenioUltimoMensaje = daoUsuario.buscaUsuarioId(dao,Integer.parseInt(usuarioDuenioUltimoMensaje)).getEmail();
+                    if (!usuarioDuenioUltimoMensaje.equals("-1")) ultimoMensaje = usuarioDuenioUltimoMensaje + ultimoMensaje.substring(ultimoMensaje.indexOf(':'));
+                    else ultimoMensaje = ultimoMensaje.substring(ultimoMensaje.indexOf(':'));
+                }
                 usuarios[1] = daoUsuario.buscaUsuarioId(dao,idUser);
                 mensajesNoLeidos = daoMensaje.determinarMensajesSinLeer(dao,id,uTemp);
                 chats.add(new Chat(id,usuarios,usuarios[1].getEmail(),fecha,ultimoMensaje,mensajesNoLeidos));
@@ -122,10 +129,10 @@ public class DaoChatSQL {
         }
     }
     public Chat getChat(DaoManager dao,DaoUsuarioSQL daoUsuario,DaoMensajeSQL daoMensaje, Usuario uTemp,long idChat){
-        String ultimoMensaje;
+        String ultimoMensaje = null;
         Usuario [] usuarios = new Usuario[2];
         usuarios[0] = uTemp;
-        LocalDateTime fecha;
+        LocalDateTime fecha = null;
         int idUser = 0;
         try {
             dao.open();
@@ -135,14 +142,22 @@ public class DaoChatSQL {
             while (rs.next()){
                 if (rs.getInt("idUser") != uTemp.getId()) idUser = rs.getInt("idUser");
             }
-            sentencia = "select * from chat where id =" + idChat;
+            sentencia = "select * from mensajesUser where idChat=" + idChat + " and idUserRecibe=" + uTemp.getId() + " order by fecha desc limit 1";
             rs = stmt.executeQuery(sentencia);
-            rs.next();
-            if (rs.getString("fechaUltimoMensaje") != null) fecha = Utilidades.pasarFechaHoraLocaldate(rs.getString("fechaUltimoMensaje"));
-            else fecha = null;
-            ultimoMensaje = rs.getString("ultimoMensaje");
+            if (rs.next()){
+                ultimoMensaje = rs.getString("mensaje");
+                ultimoMensaje = rs.getInt("idUserEnvia") + ":" + ultimoMensaje;
+                if (rs.getInt("idUserEnvia") != -1) fecha = Utilidades.pasarFechaHoraLocaldate(rs.getString("fecha"));
+            }
             dao.close();
             usuarios[1] = daoUsuario.buscaUsuarioId(dao,idUser);
+            if (ultimoMensaje != null) {
+                String usuarioDuenioUltimoMensaje = ultimoMensaje.substring(0, ultimoMensaje.indexOf(':'));
+                if (Integer.parseInt(usuarioDuenioUltimoMensaje) == uTemp.getId()) usuarioDuenioUltimoMensaje = "Tú";
+                else if (Integer.parseInt(usuarioDuenioUltimoMensaje) != -1) usuarioDuenioUltimoMensaje = daoUsuario.buscaUsuarioId(dao,Integer.parseInt(usuarioDuenioUltimoMensaje)).getEmail();
+                if (!usuarioDuenioUltimoMensaje.equals("-1")) ultimoMensaje = usuarioDuenioUltimoMensaje + ultimoMensaje.substring(ultimoMensaje.indexOf(':'));
+                else ultimoMensaje = ultimoMensaje.substring(ultimoMensaje.indexOf(':') + 1);
+            }
             int mensajesNoLeidos = daoMensaje.determinarMensajesSinLeer(dao,idChat,uTemp);
             return new Chat(idChat,usuarios,usuarios[1].getEmail(),fecha,ultimoMensaje,mensajesNoLeidos);
         } catch (SQLException e) {
@@ -207,7 +222,8 @@ public class DaoChatSQL {
     }
     public Chat cargaChat(DaoManager dao,DaoMensajeSQL daoMensaje,DaoUsuarioSQL daoUsuario,Usuario uTemp,long idChat){
         Chat chat;
-        LocalDateTime fecha;
+        LocalDateTime fecha = null;
+        String mensaje = null;
         String sentencia = "select * from chatUsuario where idChat=" + idChat + " and idUser !=" + uTemp.getId();
         Usuario[] usuarios = new Usuario[2];
         usuarios[0] = uTemp;
@@ -222,12 +238,13 @@ public class DaoChatSQL {
             usuarios[1] = daoUsuario.buscaUsuarioId(dao,idOtroUser);
             dao.open();
             stmt = dao.getConexion().createStatement();
-            sentencia = "select * from chat where id=" + idChat;
+            sentencia = "select * from mensajesUser where idChat=" + idChat + " and idUserRecibe=" + uTemp.getId() + " order by fecha desc limit 1";
             rs = stmt.executeQuery(sentencia);
-            rs.next();
-            if (rs.getString("fechaUltimoMensaje") == null) fecha = null;
-            else fecha = Utilidades.pasarFechaHoraLocaldate(rs.getString("fechaUltimoMensaje"));
-            chat = new Chat(rs.getLong("id"),usuarios,usuarios[1].getEmail(),fecha,rs.getString("ultimoMensaje"));
+            if (rs.next()){
+                if (rs.getInt("idUserEnvia") != -1) fecha = Utilidades.pasarFechaHoraLocaldate(rs.getString("fecha"));
+                mensaje = rs.getString("mensaje");
+            }
+            chat = new Chat(idChat,usuarios,usuarios[1].getEmail(),fecha,mensaje);
             dao.close();
             chat.addMensajes(daoMensaje.cargaMensajes(dao,daoUsuario,uTemp,idChat));
             return chat;

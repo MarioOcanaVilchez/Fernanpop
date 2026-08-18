@@ -8,12 +8,12 @@
 --%>
 <%
     GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
-    Trato trato = gestionAPP.buscarTratoId(Integer.parseInt(request.getParameter("id")));
     if (request.getParameter("opcion").equals("aceptar")){
         session.setAttribute("accion","vendeProducto");
-        session.setAttribute("idTrato",trato.getId());
+        session.setAttribute("idTrato",Integer.parseInt(request.getParameter("id")));
         response.sendRedirect("pantallaEspera.jsp");
     } else {
+        Trato trato = gestionAPP.buscarTratoId(Integer.parseInt(request.getParameter("id")));
         if (gestionAPP.rechazaSolicitudVenta(trato)){
             response.sendRedirect("SolicitudesVenta.jsp");
         } else {

@@ -124,12 +124,18 @@
         break;
         case "vendeProducto":
             Trato trato = gestionAPP.buscarTratoId((Integer) session.getAttribute("idTrato"));
-            if (gestionAPP.vendeProducto(trato,gestionAPP.buscaMail(trato.getEmailOtroUser()))){
-                out.print("SolicitudesVenta");
+            if (trato != null){
+                if (gestionAPP.vendeProducto(trato,gestionAPP.buscaMail(trato.getEmailOtroUser()))){
+                    out.print("SolicitudesVenta");
+                } else {
+                    session.setAttribute("error","Error al aceptar la solicitud de venta");
+                    session.setAttribute("recomendacion","Compruebe la conexión");
+                    out.print("Error");
+                }
             } else {
                 session.setAttribute("error","Error al aceptar la solicitud de venta");
-                session.setAttribute("recomendacion","Compruebe la conexión");
-                out.print("Error");
+                    session.setAttribute("recomendacion","Solicitud retirada");
+                    out.print("Error");
             }
         break;
         case "actualizaProducto":

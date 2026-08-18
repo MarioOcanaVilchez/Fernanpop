@@ -245,11 +245,14 @@ img {
     transform: translate(-50%, -50%);
 }
 
+#chat > p {
+    text-align: center;
+    color: var(--texto-secundario);
+    font-size: 14px;
+    margin: 30px auto;
+}
 
-
-/* ============================================================
-   CABECERA DEL CHAT (fija, justo debajo del banner superior)
-   ============================================================ */
+/*Cabecera*/
 #cabeceraChat {
     position: fixed;
     top: var(--alto-banner);
@@ -284,7 +287,7 @@ img {
     height: 24px;
 }
 
-#cabeceraChat button:hover {
+#cabeceraChat button:nth-child(1):hover {
     color: var(--verde);
 }
 
@@ -305,12 +308,73 @@ img {
 
 /* Nombre del chat, grande, al lado del avatar */
 #cabeceraChat h1 {
+    flex: 1;
+    min-width: 0;
     font-size: 19px;
     font-weight: 700;
     color: var(--texto-principal);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/*botón de los 3 puntos*/
+.btn-menu-chat {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-menu-chat:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.menuChat {
+    position: absolute;
+    top: 36px;
+    right: 0;
+    min-width: 140px;
+    background-color: var(--blanco);
+    border-radius: var(--radio-medio);
+    box-shadow: var(--sombra-card-hover);
+    overflow: hidden;
+    z-index: 100;
+
+    display: flex;
+    flex-direction: column;
+
+    opacity: 0;
+    transform: translateY(-6px);
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+}
+
+.menuChat.show {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.menuChat a {
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--texto-principal);
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.menuChat a:hover {
+    background-color: var(--verde-suave);
+    color: var(--verde-oscuro);
 }
 
 /* ============================================================
@@ -446,19 +510,15 @@ img {
     border-right: 0;
 }
 
-/* ============================================================
-   FORMULARIO DE ENVÍO (fijo, justo encima del menú inferior)
-   ============================================================ */
 #enviarMensajes {
     position: fixed;
     bottom: var(--alto-menu);
     left: 0;
     width: 100%;
     height: var(--alto-envio);
-    z-index: 90;
+    z-index: 100;
 
-    background-color: var(--blanco);
-    box-shadow: var(--sombra-banner);
+    background-color: var(--gris-fondo);
 
     display: flex;
     align-items: center;
@@ -508,9 +568,6 @@ img {
 #enviarMensajes button:hover {
     background-color: var(--verde-oscuro);
 }
-/* ============================================================
-   MENÚ CONTEXTUAL DE MENSAJES (clic derecho)
-   ============================================================ */
 .menuMensajeDropdown {
     position: absolute;
     min-width: 140px;
@@ -526,7 +583,7 @@ img {
     visibility: hidden;
     pointer-events: none;
     transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
-    z-index: 50;
+    z-index: 90;
 }
 
 .menuMensajeDropdown.activo {
@@ -538,7 +595,6 @@ img {
 /* Mensajes propios: el menú se abre JUSTO ENCIMA del mensaje, pegado a la derecha */
 .mensaje-wrapper[data-tipo="propio"] .menuMensajeDropdown {
     right: 0;
-    bottom: calc(100% + 6px);
     transform: translateY(6px);
 }
 .mensaje-wrapper[data-tipo="propio"] .menuMensajeDropdown.activo {
@@ -548,7 +604,6 @@ img {
 /* Mensajes de otro usuario: el menú se abre JUSTO ENCIMA del mensaje, pegado a la izquierda */
 .mensaje-wrapper[data-tipo="otro"] .menuMensajeDropdown {
     left: 0;
-    bottom: calc(100% + 6px);
     transform: translateY(6px);
 }
 .mensaje-wrapper[data-tipo="otro"] .menuMensajeDropdown.activo {
@@ -558,11 +613,19 @@ img {
 /* Mensajes de administración: el menú se abre JUSTO DEBAJO del mensaje, centrado */
 .mensaje-wrapper[data-tipo="admin"] .menuMensajeDropdown {
     left: 50%;
-    top: calc(100% + 6px);
     transform: translate(-50%, -6px);
 }
 .mensaje-wrapper[data-tipo="admin"] .menuMensajeDropdown.activo {
     transform: translate(-50%, 0);
+}
+
+/*dirección del menú (calculada por javascript según espacio disponible)*/
+.menuMensajeDropdown.menu-arriba {
+    bottom: calc(100% + 6px);
+}
+
+.menuMensajeDropdown.menu-abajo {
+    top: calc(100% + 6px);
 }
 
 .menuMensajeDropdown a {

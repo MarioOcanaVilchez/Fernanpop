@@ -9,7 +9,7 @@
 <html>
 <head>
     <title>Buscador</title>
-    <link rel="stylesheet" type="text/css" href="CSS/Buscador.css?v=3">
+    <link rel="stylesheet" type="text/css" href="CSS/Buscador.css?v=5">
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
 </head>
 <body>
@@ -80,6 +80,27 @@
         <input type="hidden" name="precioMin" id="precioMin" value="0">
         <input type="hidden" name="precioMax" id="precioMax" value="2000">
     </div>
+    <button type="button" class="btn-suerte" onclick="window.location.href=<%="'ProductoComprar.jsp?id=" + gestionAPP.getProductoAleatorio() + "'"%>">
+        <svg viewBox="175 65 330 415" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="190,167 340,254 340,464 190,377" fill="none" stroke="#000000" stroke-width="1.5"/>
+            <polygon points="490,167 340,254 340,464 490,377" fill="none" stroke="#000000" stroke-width="1.5"/>
+            <polygon points="340,80 490,167 340,254 190,167" fill="none" stroke="#000000" stroke-width="1.5"/>
+
+            <circle cx="340" cy="123.5" r="9" fill="none" stroke="#000000" stroke-width="1.5"/>
+            <circle cx="265" cy="167"   r="9" fill="none" stroke="#000000" stroke-width="1.5"/>
+            <circle cx="415" cy="167"   r="9" fill="none" stroke="#000000" stroke-width="1.5"/>
+            <circle cx="340" cy="167"   r="9" fill="none" stroke="#000000" stroke-width="1.5"/>
+            <circle cx="340" cy="210.5" r="9" fill="none" stroke="#000000" stroke-width="1.5"/>
+
+            <circle cx="227.5" cy="241.25" r="7" fill="none" stroke="#000000" stroke-width="1.5"/>
+            <circle cx="265"   cy="315.5"  r="7" fill="none" stroke="#000000" stroke-width="1.5"/>
+            <circle cx="302.5" cy="389.75" r="7" fill="none" stroke="#000000" stroke-width="1.5"/>
+
+            <circle cx="452.5" cy="241.25" r="7" fill="none" stroke="#000000" stroke-width="1.5"/>
+            <circle cx="377.5" cy="389.75" r="7" fill="none" stroke="#000000" stroke-width="1.5"/>
+        </svg>
+        voy a tener suerte
+    </button>
     <input type="submit" value="Buscar">
 </form>
 

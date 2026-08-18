@@ -9,7 +9,7 @@
 <%
     GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
     int idOtroUser = Integer.parseInt(request.getParameter("idUser"));
-    if (gestionAPP.bloqueaUser(idOtroUser)) response.sendRedirect("SeleccionChats.jsp");
+    if (gestionAPP.bloqueaUser(idOtroUser)) response.sendRedirect((String) session.getAttribute("paginaActual"));
     else {
         session.setAttribute("error","Error al bloquear al usuario");
         session.setAttribute("recomendacion","Compruebe la conexión");
