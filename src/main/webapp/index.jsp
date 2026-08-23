@@ -39,6 +39,7 @@
         session.setAttribute("estado",null);
         session.setAttribute("idChat",null);
         session.setAttribute("paginaActual",null);
+        session.setAttribute("chatbot",null);
         if (session.getAttribute("pagina") == null) session.setAttribute("pagina",1);
         int numProductos = gestionAPP.getTotalProductos(null,0,Integer.MAX_VALUE);
         if (session.getAttribute("numPaginas") == null) session.setAttribute("numPaginas",(numProductos % 12 != 0? numProductos / 12 + 1 : numProductos / 12));

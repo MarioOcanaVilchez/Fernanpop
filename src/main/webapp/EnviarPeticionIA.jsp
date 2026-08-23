@@ -1,25 +1,22 @@
 <%@ page import="Controller.GestionAPP" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="Modelos.Trato" %><%--
+<%@ page import="Modelos.Mensaje" %>
+<%@ page import="java.util.ArrayList" %><%--
   Created by IntelliJ IDEA.
   User: carni
-  Date: 12/07/2026
-  Time: 17:26
+  Date: 19/08/2026
+  Time: 18:41
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Compras</title>
-    <link rel="stylesheet" type="text/css" href="CSS/Compras.css?v=4">
+    <title>Chatbot</title>
+    <link rel="stylesheet" type="text/css" href="CSS/EnviarPeticionIA.css?v=3">
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
 </head>
 <body>
-<% GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
-    session.setAttribute("chatbot",null);
-    if (gestionAPP.getUsuario() == null) response.sendRedirect("InicioSesion.jsp");
-%>
 <%
+    GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
     // Paleta de colores estilo Google
     String[] coloresAvatar = {
             "#e53935", "#8e24aa", "#3949ab", "#1e88e5",
@@ -61,52 +58,88 @@
     out.print("</div>");
 %>
 
-<ul>
-    <!-- Cada una es una pagina diferente porque se pintan diferente es decir esta no sera tratos sera una de las 4-->
-    <li id="seleccionado"> <a href="Compras.jsp">Compras</a></li>
-    <li><a href="Ventas.jsp">Ventas</a></li>
-    <li><a href="SolicitudesCompra.jsp">Solicitudes de compra</a></li>
-    <li><a href="SolicitudesVenta.jsp">Solicitudes de venta</a></li>
-</ul>
 <%
-    if (gestionAPP.getUsuario() != null) {
-        ArrayList<Trato> compras = gestionAPP.getHistoricoCompras();
-        if (compras == null || compras.isEmpty()) out.print("<p>No has realizado ninguna compra</p>");
-        else {
-            out.print("<div id=\"Central\">");
-            for (Trato t : compras) {
-                out.print("<div class=\"compra\">");
-                if (t.getProducto().getNombreImagen() == null)
-                    out.print("    <img alt=\"imagenProducto\" src=\"imagenes/Captura%20de%20pantalla%202026-07-09%20164506.png\">\n");
-                else out.print("    <img alt=\"imagenProducto\" src=\"" + request.getContextPath()
-                        + "/VerImagen?nombreImagen=" + t.getProducto().getNombreImagen() + "\">\n");
-                out.print("<h1>" + t.getProducto().getTitulo() + "</h1>" +
-                        "<p>a " + t.getEmailOtroUser() + " por ");
-                if (t.getPrecio() % 1 == 0) out.print((int) t.getPrecio());
-                else out.print(t.getPrecio());
-                out.print(" €</p>");
-                out.print("<div class=\"estrellas-visual\">");
-                if (t.getPuntuacion() == -1) out.print("<p>No puntuado</p>");
-                else {
-                    for (int i = 0; i < 5; i++) {
-                        String claseRelleno = (i < t.getPuntuacion()) ? "rellena" : "";
-                        out.print("<svg viewBox=\"0 0 100 100\"><polygon class=\"" + claseRelleno + "\" points=\"50,5 61,38 96,38 68,59 79,92 50,71 21,92 32,59 4,38 39,38\"></polygon></svg>");
-                    }
-                    out.print("</div>");
-                }
-                if (t.getComentario() == null) out.print("<p>No Comentado</p>");
-                else out.print("<p>" + t.getComentario() + "</p>");
-                out.print("<button onclick=\"window.location.href='Puntuar.jsp?id=" + t.getId() + "'\">");
-                if (t.getPuntuacion() == -1) out.print("Puntuar</button>");
-                else if (t.getComentario() == null) out.print("Comentar</button>");
-                else out.print("Cambiar valoración</button>");
-                out.print("</div>");
-            }
-            out.print("</div>");
-        }
-    }
+    String peticion = request.getParameter("peticion");
+    session.setAttribute("peticion",peticion);
+    //Esto sera una pantalla de carga que simulara ser el chatbot pensando y en un fecht se hara la petición
+    //Se guardara el texto de la ia y se guardara en el arraylist de mensajes, despues volvemos a
+    //la pantalla Chatbot.jsp
+    ArrayList<Mensaje> mensajes = new ArrayList<>();
+    if (session.getAttribute("chatbot") != null) mensajes = (ArrayList<Mensaje>) session.getAttribute("chatbot");
+    mensajes.add(new Mensaje(mensajes.size() + 1,peticion,gestionAPP.getUsuario(),null,false));
+    session.setAttribute("chatbot",mensajes);
 %>
+<div id="chat">
+    <img src="imagenes/logoChatbot.PNG" alt="logo chatbot">
+    <h1>Alfred</h1>
+    <%
+        for (Mensaje mensaje : mensajes){
+            if (mensaje.getUsuario().getId() == -1){
+                //Pinta Mensaje IA
+                out.print("<div class=\"mensaje-wrapper\" data-tipo=\"IA\">" +
+                        "<div class=\"mensajeIA\">" +
+                        "<p>" + mensaje.getContenido() + "</p>" +
+                        "</div></div>");
+            } else {
+                //Pinta mensaje persona
+                out.print("<div class=\"mensaje-wrapper\" data-tipo=\"propio\">" +
+                        "<div class=\"mensajePropio\">" +
+                        "<p>" + mensaje.getContenido() + "</p>" +
+                        "</div></div>");
+            }
+        }
+        out.print("<div class=\"mensaje-wrapper\" data-tipo=\"IA\">\n" +
+                "    <div class=\"mensajeIA mensaje-espera\">\n" +
+                "        <span class=\"punto\"></span>\n" +
+                "        <span class=\"punto\"></span>\n" +
+                "        <span class=\"punto\"></span>\n" +
+                "    </div>\n" +
+                "</div>");
+    %>
+    <div id="enviarMensajes">
+        <form onsubmit="return false;" method="get">
+            <input id="mensajeEscrito" type="text" name="peticion" value="<%=(session.getAttribute("mensajeEscrito") != null? (String) session.getAttribute("mensajeEscrito") : "")%>" required>
+            <button>
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 12h13M13 6l6 6-6 6" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </form>
+    </div>
+</div>
 
+<%
+    session.setAttribute("accion","esperaChatbot");
+%>
+<script>
+    const chat = document.getElementById("chat");
+
+    function bajarChat() {
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    bajarChat();
+</script>
+<script>
+    document.getElementById("mensajeEscrito").addEventListener("input", function() {
+        fetch("ProcesarAccion.jsp?valor=" + encodeURIComponent(this.value));
+    });
+</script>
+<script>
+    enviaPeticion();
+    function enviaPeticion(){
+        <%
+           out.print("fetch(\"ProcesarPeticion.jsp\")\n" +
+"            .then(response => response.text())\n" +
+"            .then(resultado => {\n" +
+"                window.location.href = \"GestionaPeticion.jsp\";\n" +
+"            })\n" +
+"            .catch(error => {\n" +
+"                window.location.href = \"Error.jsp\";\n" +
+"            });");
+    %>
+    }
+</script>
 <!-- Menú de abajo -->
 <div id="menu">
     <button onclick="window.location.href = 'BorraVariablesBuscar.jsp'">

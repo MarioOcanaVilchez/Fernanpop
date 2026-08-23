@@ -20,6 +20,7 @@
 
     --alto-banner: 64px;
     --alto-menu: 68px;
+    --alto-envio: 64px;
 }
 
 * {
@@ -299,4 +300,118 @@ img {
 
 #enviarMensajes button:hover {
     background-color: var(--verde-oscuro);
+}
+/* mensajes */
+#chat {
+    position: fixed;
+    top: calc(var(--alto-banner));
+    bottom: calc(var(--alto-menu));
+    left: 0;
+    width: 100%;
+
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    padding: 16px 12px calc(var(--alto-envio) + 16px) 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    scrollbar-width: none;
+
+    background-color: var(--gris-fondo);
+}
+
+#chat > img {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: var(--sombra-card);
+    flex-shrink: 0;
+}
+
+#chat > h1 {
+    font-size: 18px;
+    text-align: center;
+}
+
+
+/* Contenedor de cada mensaje: alineación según tipo */
+.mensaje-wrapper {
+    display: flex;
+    position: relative;
+    width: 100%;
+}
+
+.mensaje-wrapper[data-tipo="IA"] {
+    justify-content: flex-start;
+}
+
+.mensaje-wrapper[data-tipo="propio"] {
+    justify-content: flex-end;
+}
+
+/* Reset de párrafos dentro de las burbujas */
+.mensajeAdministracion p,
+.mensajeIA p,
+.mensajePropio p {
+    margin: 0;
+}
+
+.mensajeIA p:first-child,
+.mensajePropio p:first-child {
+    margin-bottom: 3px;
+}
+
+/* --- Mensaje propio: derecha, blanco, pico a la derecha --- */
+.mensajePropio {
+    position: relative;
+    background-color: var(--blanco);
+    color: var(--texto-principal);
+    border-radius: var(--radio-medio);
+    border-bottom-right-radius: 4px;
+    padding: 8px 12px;
+    max-width: 75%;
+    font-size: 14px;
+    box-shadow: var(--sombra-card);
+}
+
+.mensajePropio::after {
+    content: "";
+    position: absolute;
+    right: -7px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border: 7px solid transparent;
+    border-left-color: var(--blanco);
+    border-bottom: 0;
+    border-right: 0;
+}
+
+/* --- Mensaje de IA: izquierda, blanco, pico a la izquierda --- */
+.mensajeIA {
+    position: relative;
+    background-color: var(--blanco);
+    color: var(--texto-principal);
+    border-radius: var(--radio-medio);
+    border-bottom-left-radius: 4px;
+    padding: 8px 12px;
+    max-width: 75%;
+    font-size: 14px;
+    box-shadow: var(--sombra-card);
+}
+
+.mensajeIA::after {
+    content: "";
+    position: absolute;
+    left: -7px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border: 7px solid transparent;
+    border-right-color: var(--blanco);
+    border-bottom: 0;
+    border-left: 0;
 }

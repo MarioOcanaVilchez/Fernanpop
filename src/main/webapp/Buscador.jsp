@@ -15,6 +15,7 @@
 <body>
 <%
     GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
+    session.setAttribute("consultaIA",null);
     // Paleta de colores estilo Google
     String[] coloresAvatar = {
             "#e53935", "#8e24aa", "#3949ab", "#1e88e5",

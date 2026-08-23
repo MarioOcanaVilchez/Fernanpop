@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class DaoProductoSQL {
+    final int LIMITE_PAGINA = 12;
     public boolean insertarProducto(DaoManager dao, Usuario usuario, String titulo,String descripcion,String estado,double precio){
         String sentencia = "insert into producto values (" + generaId(dao) + ",'" + titulo + "','" + descripcion + "','" + estado + "'," +precio + "," + usuario.getId() + "," + true + "," + null + ")";
         try {
@@ -86,7 +87,7 @@ public class DaoProductoSQL {
     //Metodo que debe englobar todas las posibilidades de busqueda para un usuario registrado
     public ArrayList<Producto> getPaginaProductos(DaoManager dao,Usuario usuario,DaoTratoSQL daoTrato,ArrayList<Producto> productosActuales,ArrayList<Long> idProductosSolicitados,String textoBuscar,String orden,int precioMin,int precioMax){
         ArrayList<Producto> productos = new ArrayList<>();
-        String sentencia = determinarSentenciaUsuarioRegistrado(usuario,productosActuales,idProductosSolicitados,textoBuscar,orden,precioMin,precioMax);
+        String sentencia = determinarSentenciaUsuarioRegistrado(usuario,productosActuales,idProductosSolicitados,textoBuscar,orden,precioMin,precioMax,LIMITE_PAGINA);
         try {
             dao.open();
             Statement stmt = dao.getConexion().createStatement();
@@ -100,7 +101,7 @@ public class DaoProductoSQL {
             return null;
         }
     }
-    public String determinarSentenciaUsuarioRegistrado(Usuario usuario,ArrayList<Producto> productosActuales,ArrayList<Long> idProductosSolicitados,String textoBuscar,String orden,int precioMin,int precioMax){
+    public String determinarSentenciaUsuarioRegistrado(Usuario usuario,ArrayList<Producto> productosActuales,ArrayList<Long> idProductosSolicitados,String textoBuscar,String orden,int precioMin,int precioMax,int limit){
         String sentencia = "";
         if (textoBuscar == null){
             switch (orden){
@@ -114,7 +115,7 @@ public class DaoProductoSQL {
                             sentencia += idProducto + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
-                        sentencia += ") and id_usuario != " + usuario.getId() + " order by rand() limit 12";
+                        sentencia += ") and id_usuario != " + usuario.getId() + " order by rand() limit " + limit;
                     } else {
                         sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax + " and id_usuario != " + usuario.getId();
                         if (!idProductosSolicitados.isEmpty()) {
@@ -124,7 +125,7 @@ public class DaoProductoSQL {
                             }
                             sentencia = sentencia.substring(0, sentencia.length() - 1) + ")";
                         }
-                        sentencia += " order by rand() limit 12";
+                        sentencia += " order by rand() limit " + limit;
                     }
                     break;
                 case "menorMayor":
@@ -137,7 +138,7 @@ public class DaoProductoSQL {
                             sentencia += idProducto + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
-                        sentencia += ") and id_usuario != " + usuario.getId() + " order by precio asc limit 12";
+                        sentencia += ") and id_usuario != " + usuario.getId() + " order by precio asc limit " + limit;
                     } else {
                         sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax + " and id_usuario != " + usuario.getId();
                         if (!idProductosSolicitados.isEmpty()) {
@@ -147,7 +148,7 @@ public class DaoProductoSQL {
                             }
                             sentencia = sentencia.substring(0, sentencia.length() - 1) + ")";
                         }
-                        sentencia += " order by precio asc limit 12";
+                        sentencia += " order by precio asc limit " + limit;
                     }
                     break;
                 case "mayorMenor":
@@ -160,7 +161,7 @@ public class DaoProductoSQL {
                             sentencia += idProducto + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
-                        sentencia += ") and id_usuario != " + usuario.getId() + " order by precio desc limit 12";
+                        sentencia += ") and id_usuario != " + usuario.getId() + " order by precio desc limit " + limit;
                     } else {
                         sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax + " and id_usuario != " + usuario.getId();
                         if (!idProductosSolicitados.isEmpty()) {
@@ -170,7 +171,7 @@ public class DaoProductoSQL {
                             }
                             sentencia = sentencia.substring(0, sentencia.length() - 1) + ")";
                         }
-                        sentencia += " order by precio desc limit 12";
+                        sentencia += " order by precio desc limit " + limit;
                     }
                     break;
             }
@@ -186,7 +187,7 @@ public class DaoProductoSQL {
                             sentencia += idProducto + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
-                        sentencia += ") and id_usuario != " + usuario.getId() + " and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by rand() limit 12";
+                        sentencia += ") and id_usuario != " + usuario.getId() + " and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by rand() limit " + limit;
                     } else {
                         sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax + " and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') and id_usuario != " + usuario.getId();
                         if (!idProductosSolicitados.isEmpty()) {
@@ -196,7 +197,7 @@ public class DaoProductoSQL {
                             }
                             sentencia = sentencia.substring(0, sentencia.length() - 1) + ")";
                         }
-                        sentencia += " order by rand() limit 12";
+                        sentencia += " order by rand() limit " + limit;
                     }
                     break;
                 case "menorMayor":
@@ -209,7 +210,7 @@ public class DaoProductoSQL {
                             sentencia += idProducto + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
-                        sentencia += ") and id_usuario != " + usuario.getId() + " and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by precio asc limit 12";
+                        sentencia += ") and id_usuario != " + usuario.getId() + " and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by precio asc limit " + limit;
                     } else {
                         sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax + " and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') and id_usuario != " + usuario.getId();
                         if (!idProductosSolicitados.isEmpty()) {
@@ -219,7 +220,7 @@ public class DaoProductoSQL {
                             }
                             sentencia = sentencia.substring(0, sentencia.length() - 1) + ")";
                         }
-                        sentencia += " order by precio asc limit 12";
+                        sentencia += " order by precio asc limit " + limit;
                     }
                     break;
                 case "mayorMenor":
@@ -232,7 +233,7 @@ public class DaoProductoSQL {
                             sentencia += idProducto + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
-                        sentencia += ") and id_usuario != " + usuario.getId() + " and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by precio desc limit 12";
+                        sentencia += ") and id_usuario != " + usuario.getId() + " and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by precio desc limit " + limit;
                     } else {
                         sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax + " and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') and id_usuario != " + usuario.getId();
                         if (!idProductosSolicitados.isEmpty()) {
@@ -242,7 +243,7 @@ public class DaoProductoSQL {
                             }
                             sentencia = sentencia.substring(0, sentencia.length() - 1) + ")";
                         }
-                        sentencia += " order by precio desc limit 12";
+                        sentencia += " order by precio desc limit " + limit;
                     }
                     break;
             }
@@ -260,8 +261,8 @@ public class DaoProductoSQL {
                             sentencia += p.getId() + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
-                        sentencia += ") order by rand() limit 12";
-                    } else sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax +" order by rand() limit 12";
+                        sentencia += ") order by rand() limit " + LIMITE_PAGINA;
+                    } else sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax +" order by rand() limit " + LIMITE_PAGINA;
                     break;
                 case "menorMayor":
                     if (productosActuales != null) {
@@ -270,8 +271,8 @@ public class DaoProductoSQL {
                             sentencia += p.getId() + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
-                        sentencia += ") order by precio asc limit 12";
-                    } else sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax +" order by precio asc limit 12";
+                        sentencia += ") order by precio asc limit " + LIMITE_PAGINA;
+                    } else sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax +" order by precio asc limit " + LIMITE_PAGINA;
                     break;
                 case "mayorMenor":
                     if (productosActuales != null) {
@@ -280,8 +281,8 @@ public class DaoProductoSQL {
                             sentencia += p.getId() + ",";
                         }
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
-                        sentencia += ") order by precio desc limit 12";
-                    } else sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax +" order by precio desc limit 12";
+                        sentencia += ") order by precio desc limit " + LIMITE_PAGINA;
+                    } else sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax +" order by precio desc limit " + LIMITE_PAGINA;
                     break;
             }
         } else {
@@ -294,8 +295,8 @@ public class DaoProductoSQL {
                         }
 
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
-                        sentencia += ") and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by rand() limit 12";
-                    } else sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax +" and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by rand() limit 12";
+                        sentencia += ") and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by rand() limit " + LIMITE_PAGINA;
+                    } else sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax +" and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by rand() limit " + LIMITE_PAGINA;
                     break;
                 case "menorMayor":
                     if (productosActuales != null) {
@@ -305,8 +306,8 @@ public class DaoProductoSQL {
                         }
 
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
-                        sentencia += ") and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by precio asc limit 12";
-                    } else sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax +" and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by precio asc limit 12";
+                        sentencia += ") and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by precio asc limit " + LIMITE_PAGINA;
+                    } else sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax +" and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by precio asc limit " + LIMITE_PAGINA;
                     break;
                 case "mayorMenor":
                     if (productosActuales != null) {
@@ -316,8 +317,8 @@ public class DaoProductoSQL {
                         }
 
                         sentencia = sentencia.substring(0, sentencia.length() - 1);
-                        sentencia += ") and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by precio desc limit 12";
-                    } else sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax +" and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by precio desc limit 12";
+                        sentencia += ") and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by precio desc limit " + LIMITE_PAGINA;
+                    } else sentencia = "select * from producto where enVenta = true and precio between " + precioMin + " and " + precioMax +" and (lower(titulo) like '%" + textoBuscar + "%' or lower(descripcion) like '%" + textoBuscar + "%') order by precio desc limit " + LIMITE_PAGINA;
                     break;
             }
         }
@@ -391,7 +392,7 @@ public class DaoProductoSQL {
         texto = texto.toLowerCase();
         ArrayList<Producto> productos = new ArrayList<>();
         ArrayList<Producto> productosValidos = new ArrayList<>();
-        String sentencia = "select * from producto where lower(titulo) like '%" + texto + "%' or lower(descripcion) like '%" + texto + "%' and id_usuario != " + usuario.getId() + "order by rand() limit 12";
+        String sentencia = "select * from producto where lower(titulo) like '%" + texto + "%' or lower(descripcion) like '%" + texto + "%' and id_usuario != " + usuario.getId() + "order by rand() limit " + LIMITE_PAGINA;
         try {
             dao.open();
             Statement stmt = dao.getConexion().createStatement();
@@ -582,5 +583,106 @@ public class DaoProductoSQL {
                 throw new RuntimeException(e);
             }
         }
+    }
+    public int cuentaProductosPeticionIA(DaoManager dao,String peticion){
+        peticion = peticion.replace("*","count(*)");
+        try {
+            dao.open();
+            Statement stmt = dao.getConexion().createStatement();
+            ResultSet rs = stmt.executeQuery(peticion);
+            rs.next();
+            int numProductos = rs.getInt("count(*)");
+            dao.close();
+            return numProductos;
+        } catch (SQLException e) {
+            return -1;
+        }
+    }
+    public ArrayList<Producto> getPaginaProductosPeticionIA(DaoManager dao,Usuario uTemp,String peticion,ArrayList<Producto> productosActuales,ArrayList<Long> productosSolicitados){
+        peticion = generaPeticion(uTemp,peticion,productosActuales,productosSolicitados, LIMITE_PAGINA);
+        ArrayList<Producto> productos = new ArrayList<>();
+        try {
+            dao.open();
+            Statement stmt = dao.getConexion().createStatement();
+            ResultSet rs = stmt.executeQuery(peticion);
+            while (rs.next()){
+                productos.add(new Producto(rs.getLong("id"),rs.getString("titulo"),rs.getString("descripcion"),rs.getDouble("precio"),rs.getString("estado"),rs.getString("nombreImagen")));
+            }
+            dao.close();
+            return productos;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    public String generaPeticion(Usuario uTemp,String peticion,ArrayList<Producto> productosActuales,ArrayList<Long> productosSolicitados,int limit){
+        peticion += " and id_usuario != " + uTemp.getId();
+        if (productosActuales != null && !productosActuales.isEmpty()){
+            peticion += " and id not in(";
+            for (Producto p : productosActuales){
+                peticion += p.getId() + ",";
+            }
+            peticion = peticion.substring(0,peticion.length() - 1) + ")";
+        }
+        if (productosSolicitados != null && !productosSolicitados.isEmpty()){
+            peticion += " and id not in(";
+            for (long id : productosSolicitados){
+                peticion += id + ",";
+            }
+            peticion = peticion.substring(0,peticion.length() - 1) + ")";
+        }
+        peticion += " order by rand() limit " + limit;
+        return peticion;
+    }
+    public Producto getProducto(DaoManager dao,Usuario uTemp,ArrayList<Producto> productosActuales,String textoBuscar,String orden,int precioMin,int precioMax,ArrayList<Long> idProductosSolicitados){
+        Producto producto = null;
+        String sentencia = determinarSentenciaUsuarioRegistrado(uTemp,productosActuales,idProductosSolicitados,textoBuscar,orden,precioMin,precioMax,1);
+        try {
+            dao.open();
+            Statement stmt = dao.getConexion().createStatement();
+            ResultSet rs = stmt.executeQuery(sentencia);
+            if (rs.next()){
+                producto = new Producto(rs.getLong("id"),rs.getString("titulo"),rs.getString("descripcion"),rs.getDouble("precio"),rs.getString("estado"),rs.getString("nombreImagen"));
+            }
+            dao.close();
+            return producto;
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+    public Producto getProducto(DaoManager dao,Usuario uTemp,ArrayList<Producto> productosActuales,ArrayList<Long> idProductosSolicitados,String peticion){
+        Producto producto = null;
+        peticion = completaPeticionIA(idProductosSolicitados,peticion,productosActuales,uTemp);
+        try {
+            dao.open();
+            Statement stmt = dao.getConexion().createStatement();
+            ResultSet rs = stmt.executeQuery(peticion);
+            if (rs.next()){
+                producto = new Producto(rs.getLong("id"),rs.getString("titulo"),rs.getString("descripcion"),rs.getDouble("precio"),rs.getString("estado"),rs.getString("nombreImagen"));
+            }
+            dao.close();
+            return producto;
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+    public String completaPeticionIA(ArrayList<Long> idProductosSolicitados,String peticion,ArrayList<Producto> productosActuales,Usuario usuario) {
+        peticion += " and id_usuario !=" + usuario.getId();
+        if (!idProductosSolicitados.isEmpty()) {
+            peticion += " and id not in(";
+            for (long id : idProductosSolicitados){
+                peticion += id + ",";
+            }
+            peticion = peticion.substring(0,peticion.length() - 1) + ")";
+        }
+        if (productosActuales != null && !productosActuales.isEmpty()){
+            peticion += " and id not in(";
+            for (Producto p : productosActuales){
+                peticion += p.getId() + ",";
+            }
+            peticion = peticion.substring(0,peticion.length() - 1) + ")";
+        }
+        peticion += " order by rand()";
+        return peticion;
     }
 }

@@ -8,6 +8,8 @@
 <%@ page import="Controller.GestionAPP" %><%@ page import="Modelos.Usuario"%><%@ page import="Modelos.Producto"%><%@ page import="java.util.ArrayList"%><%@ page import="Modelos.Trato"%>
 <%@ page contentType="text/plain;charset=UTF-8" language="java" %>
 <%
+    session.setAttribute("error","Error");
+    session.setAttribute("recomendacion","Inténtelo de nuevo");
     String accion = (String) session.getAttribute("accion");
     GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
     String email = (String) session.getAttribute("email");
@@ -98,12 +100,17 @@
                         //Sistema para detectar si estamos en una pagina que ya no existe
                         if ((Integer) session.getAttribute("pagina") > (Integer) session.getAttribute("numPaginas")) session.setAttribute("pagina",session.getAttribute("numPaginas"));
                         }
-                /*
-                if (((Integer) session.getAttribute("numPaginas") - 1) * 12 == productos.size()){
-                    session.setAttribute("numPaginas",(Integer) session.getAttribute("numPaginas") - 1);
-                    session.setAttribute("pagina",(Integer) session.getAttribute("pagina") - 1);
-                }
-                 */
+                        //obtenemos un producto mas para rellenar el hueco del que solicitamos
+                        if (session.getAttribute("consultaIA") != null){
+                            Producto p = gestionAPP.rellenaHuecoProductoPeticionIA(productos,(String) session.getAttribute("consultaIA"));
+                            if (p != null) productos.add(p);
+                        } else {
+                           String textoBuscar = (String) session.getAttribute("textoBuscar");
+                           int precioMin = (Integer) session.getAttribute("precioMin");
+                           int precioMax = (Integer) session.getAttribute("precioMax");
+                           Producto p = gestionAPP.rellenaHuecoProducto(productos,textoBuscar,(String) session.getAttribute("orden"),precioMin,precioMax);
+                           if (p != null) productos.add(p);
+                        }
                         session.setAttribute("acierto","Solicitud de compra enviada");
                         out.print("Acierto");
                     } else {
@@ -173,6 +180,9 @@
         case "comprobarRecargaChat":
             if (gestionAPP.getMensajesNoLeidos((long) session.getAttribute("idChat")) != 0) out.print("recarga");
             else out.print("");
+        break;
+        case "esperaChatbot":
+            session.setAttribute("mensajeEscrito",request.getParameter("valor"));
         break;
         default:
             session.setAttribute("error","Error desconocido");

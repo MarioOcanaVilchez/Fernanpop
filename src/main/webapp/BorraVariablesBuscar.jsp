@@ -19,6 +19,7 @@
     session.setAttribute("productos",null);
     session.setAttribute("precioMin",null);
     session.setAttribute("precioMax",null);
+    session.setAttribute("consultaIA",null);
     response.sendRedirect("index.jsp");
 %>
 </body>

@@ -8,6 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
+    session.setAttribute("chatbot",null);
     if (gestionAPP.getUsuario() == null) response.sendRedirect("InicioSesion.jsp");
     else{
         int idUser = Integer.parseInt(request.getParameter("idUser"));

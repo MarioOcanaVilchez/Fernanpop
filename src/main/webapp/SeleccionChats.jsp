@@ -17,6 +17,7 @@
 </head>
 <body>
 <% GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
+    session.setAttribute("chatbot",null);
     session.setAttribute("paginaActual","SeleccionChats.jsp");
   if (gestionAPP.getUsuario() == null) response.sendRedirect("InicioSesion.jsp");
   session.setAttribute("idChat",null);

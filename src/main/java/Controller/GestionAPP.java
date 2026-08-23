@@ -7,8 +7,14 @@ import Utilidades.Comunicaciones;
 import Utilidades.PlantillasCorreo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.json.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -108,14 +114,6 @@ public class GestionAPP {
         usuario = daoUsuario.login(dao,email,clave);
         return usuario != null;
     }
-    public void quitarUserEnUso(Usuario uTemp){
-        Persistencia.quitarUserEnUso(uTemp);
-    }
-    public Usuario cogeUsuarioSesionAnt(){
-        Usuario u =  Persistencia.cogerUserEnUso();
-        if (u != null) u = daoUsuario.buscaUsuarioId(dao,u.getId());
-        return u;
-    }
     public ArrayList<Producto> getProductosUser(){
         return daoProducto.buscaProductoIdUser(dao,usuario.getId());
     }
@@ -139,7 +137,6 @@ public class GestionAPP {
     //Borra un usuario
     public boolean borrarUsuario(){
         if (daoUsuario.eliminaUsuario(dao,usuario,daoProducto)) {
-            Persistencia.quitarUserEnUso(usuario);
             usuario = null;
             return true;
         }
@@ -232,20 +229,6 @@ public class GestionAPP {
     public boolean permisoSinLogeo(){
         return Persistencia.permisoUsoSinLogeo();
     }
-    public LocalDateTime mensajeUltimaSesion(Usuario uTemp){
-        String ultimaConexion =  Persistencia.leeProperties("ultimaConexion" + uTemp.getId());
-        if (ultimaConexion == null) return null;
-        else {
-            return LocalDateTime.of(Integer.parseInt(ultimaConexion.substring(0,4)),Integer.parseInt(ultimaConexion.substring(5,7)),Integer.parseInt(ultimaConexion.substring(8,10)),Integer.parseInt(ultimaConexion.substring(11,13)),Integer.parseInt(ultimaConexion.substring(14,16)),Integer.parseInt(ultimaConexion.substring(17,19)));
-        }
-    }
-    public void cambiaUltimaConexion(Usuario uTemp){
-        Persistencia.setProperties("ultimaConexion" + uTemp.getId(), String.valueOf(LocalDateTime.now()));
-        Persistencia.ponerUserEnUso(uTemp);
-    }
-    public String leeConfiguracion(){
-        return Persistencia.leeProperties();
-    }
 
     public boolean copiaSeguridad(String ruta){
         return Persistencia.copiaSeguridad(ruta,daoUsuario.getAllUsuarios(dao));
@@ -263,9 +246,6 @@ public class GestionAPP {
             consulta = consulta.substring(0,consulta.indexOf("ORDER BY")) + " AND id_usuario != " + usuario.getId() + " " + consulta.substring(consulta.indexOf("ORDER BY"));
             return daoProducto.consultaPersonalizada(dao,consulta.concat(" AND id_usuario != " + usuario.getId()),usuario,daoTrato);
         } else return daoProducto.consultaPersonalizada(dao,consulta.concat(" AND id_usuario != " + usuario.getId()),usuario,daoTrato);
-    }
-    public int consultaPersonalizadaCount(String consulta){
-        return daoProducto.consultaPersonalizadaCount(consulta,dao);
     }
     /*public void mock(){
         addUsuario("mocavil1107@g.educaand.es","Mario","Ocaña Vílchez","1234",0 );
@@ -410,5 +390,75 @@ public class GestionAPP {
     public boolean actualizaMensaje(long idChat,long idMensaje,String nuevoMensaje){
         return daoMensaje.actualizaMensaje(dao,idChat,idMensaje,nuevoMensaje,usuario);
     }
+
+    //Chatbot
+    public String consultarIA(String pregunta) {
+        // API Key
+        String apiKey = Persistencia.leeProperties("apiKeyIA");
+
+        String urlAnythingLLM = Persistencia.leeProperties("rutaIA");
+
+        JSONObject body = new JSONObject();
+        body.put("message", pregunta);
+        body.put("mode", "chat");
+        body.put("stream", false);
+
+        String jsonBody = body.toString();
+        try {
+            System.setProperty("jdk.httpclient.allowRestrictedHeaders", "true");
+
+            HttpClient client = HttpClient.newBuilder()
+                    .version(HttpClient.Version.HTTP_1_1)
+                    .build();
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(urlAnythingLLM))
+                    .header("accept", "application/json")
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + apiKey)
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody, StandardCharsets.UTF_8))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                JSONObject jsonResponse = new JSONObject(response.body());
+                return jsonResponse.getString("textResponse");
+            } else {
+                return "Lo lamento señor pero el servicio está caído, contacte con el administrador";
+            }
+        } catch (Exception e){
+            return "Lo lamento señor pero el servicio está caído, contacte con el administrador";
+        }
+    }
+    //Esto solo se ejecuta la primera vez para saber cuantas páginas hay
+    public String completaPeticionIANumProductos(String peticion) {
+        peticion += " and id_usuario !=" + usuario.getId();
+        ArrayList<Long> ids = daoTrato.productosVentasPendientesConParametros(dao, usuario);
+        if (!ids.isEmpty()) {
+            peticion += " and id not in(";
+            for (long id : ids){
+                peticion += id + ",";
+            }
+            peticion = peticion.substring(0,peticion.length() - 1) + ") order by rand()";
+        }
+        return peticion;
+    }
+    //Esto solo se ejecuta la primera vez para saber cuantas páginas hay
+    public int totalProductosPeticionIA(String peticion){
+        peticion = completaPeticionIANumProductos(peticion);
+        return daoProducto.cuentaProductosPeticionIA(dao,peticion);
+    }
+    public ArrayList<Producto> getPaginaProductosPeticionIA(ArrayList<Producto> productosActuales,String peticion){
+        ArrayList<Long> productosSolicitados = daoTrato.productosVentasPendientesConParametros(dao, usuario);
+        return daoProducto.getPaginaProductosPeticionIA(dao,usuario,peticion,productosActuales,productosSolicitados);
+    }
+    public Producto rellenaHuecoProducto(ArrayList<Producto> productosActuales,String textoBuscar,String orden,int precioMin,int precioMax){
+        return daoProducto.getProducto(dao,usuario,productosActuales,textoBuscar,orden,precioMin,precioMax,daoTrato.productosVentasPendientesConParametros(dao,usuario));
+    }
+    public Producto rellenaHuecoProductoPeticionIA(ArrayList<Producto> productosActuales,String peticion){
+        return daoProducto.getProducto(dao,usuario,productosActuales,daoTrato.productosVentasPendientesConParametros(dao,usuario),peticion);
+    }
+
 
 }
