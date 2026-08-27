@@ -11,8 +11,7 @@
     GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
     long idProducto = Long.parseLong(request.getParameter("id"));
     Producto producto = gestionAPP.buscarProductoId(idProducto);
-    if (gestionAPP.quitarProducto(producto)){
-        if (producto.getNombreImagen() != null) gestionAPP.eliminaImagen(producto.getNombreImagen());
+    if (gestionAPP.eliminarProducto(producto)){
         response.sendRedirect("MisProductos.jsp");
     }
     else {

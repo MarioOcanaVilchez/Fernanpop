@@ -334,6 +334,9 @@ body > p {
 .compra .estrellas-visual polygon.rellena {
     fill: #ffd400;
 }
+.compra .estrellas-visual p {
+    padding: 0;
+}
 
 #menu {
     position: fixed;

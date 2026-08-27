@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>RegistrarDatos</title>
+    <title>Registrarse</title>
     <link rel="stylesheet" type="text/css" href="CSS/RegistrarDatos.css">
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
 </head>

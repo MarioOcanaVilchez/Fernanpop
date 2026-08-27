@@ -34,12 +34,26 @@ public class DaoUsuarioSQL implements DaoUsuario{
             dao.open();
             Statement stmt = dao.getConexion().createStatement();
             stmt.executeUpdate(sentencia);
-            sentencia = "insert into usuarioBorrado values (" + usuario.getId() + ",'" + usuario.getEmail() + "','" + usuario.getApel() + "','" + usuario.getClave() + "'," + usuario.getMovil() + "," + usuario.isAdmin() + ")";
+            sentencia = "insert into usuarioBorrado values (" + usuario.getId() + ",'" + usuario.getEmail() + "','" + usuario.getApel() + "','" + usuario.getClave() + "'," + usuario.getMovil() + "," + usuario.isAdmin() + ",'" + usuario.getNombre() + "')";
             stmt.executeUpdate(sentencia);
             dao.close();
-            return daoProducto.quitaProductosEnVenta(dao,usuario);
+            return true;
         } catch (SQLException e) {
             return false;
+        }
+    }
+    public boolean recuperaUsuario(DaoManager dao,Usuario usuario){
+        String sentencia = "delete from usuarioBorrado where email='" + usuario.getEmail() + "'";
+        try {
+            dao.open();
+            Statement stmt = dao.getConexion().createStatement();
+            stmt.executeUpdate(sentencia);
+            sentencia = "insert into usuario values(" + usuario.getId() + ",'" + usuario.getEmail() + "','" + usuario.getApel() + "','" + usuario.getClave() + "'," + usuario.getMovil() + ",false,'" + usuario.getNombre() + "')";
+            stmt.executeUpdate(sentencia);
+            dao.close();
+            return true;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -75,12 +89,20 @@ public class DaoUsuarioSQL implements DaoUsuario{
     @Override
     public Usuario buscaUsuarioId(DaoManager dao, int id) {
         String sentencia = "select * from usuario where id = " + id;
+        Usuario u;
         try {
             dao.open();
             Statement stmt = dao.getConexion().createStatement();
             ResultSet rs = stmt.executeQuery(sentencia);
             if (rs.next()){
-                Usuario u = new Usuario(rs.getInt("id"),rs.getString("email"),rs.getString("nombre"),rs.getString("apel"),rs.getString("clave"),rs.getInt("movil"),rs.getBoolean("admin"));
+                u = new Usuario(rs.getInt("id"),rs.getString("email"),rs.getString("nombre"),rs.getString("apel"),rs.getString("clave"),rs.getInt("movil"),rs.getBoolean("admin"));
+                dao.close();
+                return u;
+            }
+            sentencia = "select * from usuarioBorrado where id = " + id;
+            rs = stmt.executeQuery(sentencia);
+            if (rs.next()){
+                u = new Usuario(rs.getInt("id"),rs.getString("email"),rs.getString("nombre"),rs.getString("apel"),rs.getString("clave"),rs.getInt("movil"),rs.getBoolean("admin"));
                 dao.close();
                 return u;
             }
@@ -88,6 +110,38 @@ public class DaoUsuarioSQL implements DaoUsuario{
             return null;
         } catch (SQLException e) {
             return null;
+        }
+    }
+    public boolean usuarioActivo(DaoManager dao,String email){
+        String sentencia = "select * from usuario where email = '" + email + "'";
+        try {
+            dao.open();
+            Statement stmt = dao.getConexion().createStatement();
+            ResultSet rs = stmt.executeQuery(sentencia);
+            if (rs.next()){
+                dao.close();
+                return true;
+            }
+            dao.close();
+            return false;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+    public boolean usuarioBorrado(DaoManager dao,String email){
+        String sentencia = "select * from usuarioBorrado where email = '" + email + "'";
+        try {
+            dao.open();
+            Statement stmt = dao.getConexion().createStatement();
+            ResultSet rs = stmt.executeQuery(sentencia);
+            if (rs.next()){
+                dao.close();
+                return true;
+            }
+            dao.close();
+            return false;
+        } catch (SQLException e) {
+            return false;
         }
     }
 
@@ -124,13 +178,23 @@ public class DaoUsuarioSQL implements DaoUsuario{
     @Override
     public Usuario buscaUsuarioMail(DaoManager dao, String email) {
         String sentencia = "select * from usuario where email = ?";
+        Usuario u;
         try {
             dao.open();
             PreparedStatement stmt = dao.getConexion().prepareStatement(sentencia);
             stmt.setString(1,email);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()){
-                Usuario u = new Usuario(rs.getInt("id"),rs.getString("email"),rs.getString("nombre"),rs.getString("apel"),rs.getInt("movil"));
+                u = new Usuario(rs.getInt("id"),rs.getString("email"),rs.getString("nombre"),rs.getString("apel"),rs.getInt("movil"));
+                dao.close();
+                return u;
+            }
+            sentencia = "select * from usuarioBorrado where email = ?";
+            stmt = dao.getConexion().prepareStatement(sentencia);
+            stmt.setString(1,email);
+            rs = stmt.executeQuery();
+            if (rs.next()){
+                u = new Usuario(rs.getInt("id"),rs.getString("email"),rs.getString("nombre"),rs.getString("apel"),rs.getInt("movil"));
                 dao.close();
                 return u;
             }

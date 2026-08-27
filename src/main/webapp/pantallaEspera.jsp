@@ -9,20 +9,23 @@
 <html>
 <head>
     <title>Title</title>
-    <link rel="stylesheet" type="text/css" href="CSS/PantallaEspera.css">
+    <link rel="stylesheet" type="text/css" href="CSS/PantallaEspera.css?v=4">
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
 </head>
 <body>
 <div id="pantallaCarga" class="loading-overlay">
-    <div class="spinner"></div>
+    <div class="spinner-orbit">
+        <span class="dot d1"></span>
+        <span class="dot d2"></span>
+        <span class="dot d3"></span>
+        <span class="dot d4"></span>
+        <span class="dot d5"></span>
+    </div>
     <p class="loading-text" id="loadingText"></p>
     <%
         String accion = session.getAttribute("accion").toString();
         GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
         switch (accion){
-            case "enviarCorreoVerificacion":
-                session.setAttribute("email",request.getParameter("email"));
-                break;
             case "crearCuenta":
                 session.setAttribute("nombre",request.getParameter("nombre"));
                 session.setAttribute("apel",request.getParameter("apel"));
@@ -37,9 +40,8 @@
                 if (gestionAPP.getUsuario() == null) response.sendRedirect("InicioSesion.jsp");
                 else session.setAttribute("precio",Double.parseDouble(request.getParameter("precio")));
                 break;
-
         }
-      %>
+    %>
     <script>
         const accion = "<%= session.getAttribute("accion") %>";
         const textos = {
@@ -55,16 +57,8 @@
         document.getElementById("loadingText").innerText = textos[accion] || textos["default"];
         <%
         if (!accion.equals("procesoCompra") || gestionAPP.getUsuario() != null)
-            out.print("fetch(\"ProcesarAccion.jsp\")\n" +
-"            .then(response => response.text())\n" +
-"            .then(resultado => {\n" +
-"                window.location.href = resultado.trim() + \".jsp\";\n" +
-"            })\n" +
-"            .catch(error => {\n" +
-"                window.location.href = \"Error.jsp\";\n" +
-"            });");
-    %>
-
+            out.print("fetch(\"ProcesarAccion.jsp\")\n" + "            .then(response => response.text())\n" + "            .then(resultado => {\n" + "                window.location.href = resultado.trim() + \".jsp\";\n" + "            })\n" + "            .catch(error => {\n" + "                window.location.href = \"Error.jsp\";\n" + "            });");
+        %>
     </script>
 </div>
 </body>

@@ -8,14 +8,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <% session.setAttribute("paginaAnterior","registrarEmail.jsp"); %>
+    <title>Registrarse</title>
     <link rel="stylesheet" type="text/css" href="CSS/RegistrarEmail.css">
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
     <% session.setAttribute("accion","enviarCorreoVerificacion");
     session.setAttribute("oportunidades",null);%>
 </head>
 <body>
-    <form method="get" action="pantallaEspera.jsp">
+    <form method="get" action="ValidarEmail.jsp">
         <p><input type="text" required name="email" placeholder="email"></p>
         <p><input type="submit" value="Registrar"></p>
         <p>¿Ya tienes cuenta? <a href="InicioSesion.jsp">Inicia sesión</a></p>

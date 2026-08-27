@@ -13,13 +13,19 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <%
+        GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
+        if (session.getAttribute("idChat") == null) session.setAttribute("idChat",Long.parseLong(request.getParameter("idChat")));
+        long idChat = (long) session.getAttribute("idChat");
+        Chat chat = gestionAPP.recargaChat(idChat);
+        session.setAttribute("accion","comprobarRecargaChat");
+    %>
+    <title>Chat con <%=chat.getOtroUsuario().getEmail()%></title>
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
     <link rel="stylesheet" type="text/css" href="CSS/UsaChat.css?v=11">
 </head>
 <body>
 <%
-    GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
     session.setAttribute("paginaActual","UsaChat.jsp");
     // Paleta de colores estilo Google
     String[] coloresAvatar = {
@@ -60,12 +66,6 @@
             "                <path d=\"M4.8 19.2c1.2-3.4 4-5.1 7.2-5.1s6 1.7 7.2 5.1c.25.7-.25 1.4-1 1.4H5.8c-.75 0-1.25-.7-1-1.4z\" fill=\"#ffffff\"/>\n" +
             "            </svg> Perfil</button>");
     out.print("</div>");
-%>
-<%
-    if (session.getAttribute("idChat") == null) session.setAttribute("idChat",Long.parseLong(request.getParameter("idChat")));
-    long idChat = (long) session.getAttribute("idChat");
-    Chat chat = gestionAPP.recargaChat(idChat);
-    session.setAttribute("accion","comprobarRecargaChat");
 %>
 <div id="cabeceraChat">
     <button onclick="window.location.href='SeleccionChats.jsp'">

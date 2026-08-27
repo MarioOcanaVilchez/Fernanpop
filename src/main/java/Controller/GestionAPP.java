@@ -135,12 +135,43 @@ public class GestionAPP {
         return daoProducto.getProductoAleatorio(dao,daoTrato,usuario);
     }
     //Borra un usuario
-    public boolean borrarUsuario(){
-        if (daoUsuario.eliminaUsuario(dao,usuario,daoProducto)) {
-            usuario = null;
-            return true;
+    public boolean eliminarUsuario(){
+        if (eliminaAllProductos() && eliminaAllTratosPendientes()) {
+            if (daoUsuario.eliminaUsuario(dao, usuario, daoProducto)) {
+                usuario = null;
+                return true;
+            }
         }
         return false;
+    }
+    public boolean recuperaUsuario(String email){
+        return daoUsuario.recuperaUsuario(dao,buscaMail(email));
+    }
+
+    public boolean usuarioActivo(String email){
+        return daoUsuario.usuarioActivo(dao,email);
+    }
+    public boolean usuarioBorrado(String email){
+        return daoUsuario.usuarioBorrado(dao,email);
+    }
+    public boolean eliminaAllProductos(){
+        ArrayList<Producto> productos = daoProducto.buscaProductoIdUser(dao,usuario.getId());
+        if (!productos.isEmpty()){
+            for (Producto p : productos){
+                if (!eliminarProducto(p)) return false;
+            }
+        }
+        return true;
+    }
+    public boolean eliminaAllTratosPendientes(){
+        ArrayList<Trato> tratosPendientes = daoTrato.comprasPendientes(dao,usuario,daoProducto,daoUsuario);
+        tratosPendientes.addAll(daoTrato.ventasPendientes(dao,usuario,daoProducto,daoUsuario));
+        if (!tratosPendientes.isEmpty()){
+            for (Trato t : tratosPendientes){
+                if (!daoTrato.eliminaTrato(dao,t)) return false;
+            }
+        }
+        return true;
     }
     public Trato buscarTratoId(int id){
         return daoTrato.buscaTratoId(dao,id,daoProducto,daoUsuario);
@@ -165,8 +196,12 @@ public class GestionAPP {
         if (!Comunicaciones.enviarEmail(vendedor.getEmail(),"Solicitud de compra",PlantillasCorreo.emailSolicitud(producto,usuario,precio))) return false;
         return daoTrato.addtratoCompra(dao, vendedor, producto.getId(), usuario.getId(), precio, daoProducto,daoUsuario);
     }
-    public boolean quitarProducto(Producto p){
-       return daoProducto.borrarProducto(dao,p);
+    public boolean eliminarProducto(Producto p){
+        if (daoProducto.borrarProducto(dao,p)){
+            if (p.getNombreImagen() != null) eliminaImagen(p.getNombreImagen());
+            return true;
+        }
+        return false;
     }
     public boolean vendeProducto(Trato t, Usuario comprador){
         if (daoTrato.addtratoVenta(dao, t, usuario, daoUsuario, daoProducto)) {
@@ -239,13 +274,6 @@ public class GestionAPP {
         if (!Comunicaciones.enviarEmailConProductos(uTemp.getEmail(),"Productos","Adjunto todos los productos")) return false;
         Persistencia.eliminaFicheroProductos();
         return true;
-    }
-    public ArrayList<Producto> consultaPersonalizada(String consulta){
-        if (consulta.contains("ORDER BY") || consulta.contains("GROUP BY")){
-            if (consulta.contains("GROUP BY")) return null;
-            consulta = consulta.substring(0,consulta.indexOf("ORDER BY")) + " AND id_usuario != " + usuario.getId() + " " + consulta.substring(consulta.indexOf("ORDER BY"));
-            return daoProducto.consultaPersonalizada(dao,consulta.concat(" AND id_usuario != " + usuario.getId()),usuario,daoTrato);
-        } else return daoProducto.consultaPersonalizada(dao,consulta.concat(" AND id_usuario != " + usuario.getId()),usuario,daoTrato);
     }
     /*public void mock(){
         addUsuario("mocavil1107@g.educaand.es","Mario","Ocaña Vílchez","1234",0 );
@@ -385,7 +413,7 @@ public class GestionAPP {
         return daoMensaje.eliminaMensajes(dao,idChat,usuario.getId());
     }
     public Mensaje buscaMensaje(long idChat,long idMensaje){
-        return daoMensaje.buscaMensaje(dao,idChat,idMensaje,usuario);
+        return daoMensaje.buscaMensajeChatUsuario(dao,idChat,idMensaje,usuario);
     }
     public boolean actualizaMensaje(long idChat,long idMensaje,String nuevoMensaje){
         return daoMensaje.actualizaMensaje(dao,idChat,idMensaje,nuevoMensaje,usuario);

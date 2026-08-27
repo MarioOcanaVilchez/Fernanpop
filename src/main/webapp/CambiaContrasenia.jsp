@@ -8,13 +8,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
-    <link rel="stylesheet" type="text/css" href="CSS/CambiaContrasenia.css">
+    <title>Cambiar contraseña</title>
+    <link rel="stylesheet" type="text/css" href="CSS/CambiaContrasenia.css?v=2">
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
 </head>
 <body>
 <%
     GestionAPP gestionAPP = (GestionAPP) session.getAttribute("controller");
+    session.setAttribute("paginaAnterior",null);
     // Paleta de colores estilo Google
     String[] coloresAvatar = {
             "#e53935", "#8e24aa", "#3949ab", "#1e88e5",

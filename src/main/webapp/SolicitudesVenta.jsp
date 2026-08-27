@@ -11,7 +11,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Solicitudes de venta</title>
     <link rel="stylesheet" type="text/css" href="CSS/SolicitudesVenta.css?v=3">
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
 </head>

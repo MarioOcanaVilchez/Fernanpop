@@ -372,6 +372,7 @@ public class DaoProductoSQL {
             return null;
         }
     }
+    //Devuelve todos los productos en venta de un usuario
     public ArrayList<Producto> buscaProductoIdUser(DaoManager dao, int id) {
         String sentencia = "select * from producto where id_usuario = " + id + " and enVenta = true";
         ArrayList<Producto> productos = new ArrayList<>();

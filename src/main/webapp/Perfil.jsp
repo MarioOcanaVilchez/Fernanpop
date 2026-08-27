@@ -9,7 +9,7 @@
 <html>
 <head>
     <title>Perfil</title>
-    <link rel="stylesheet" type="text/css" href="CSS/Perfil.css?v=5">
+    <link rel="stylesheet" type="text/css" href="CSS/Perfil.css?v=6">
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
 </head>
 <body>
@@ -59,7 +59,7 @@
 
 <main class="perfil-contenedor">
 
-    <!-- ============ CABECERA DEL PERFIL ============ -->
+
     <section class="tarjeta perfil-cabecera">
         <%
             String email = gestionAPP.getUsuario().getEmail();
@@ -77,7 +77,7 @@
         </div>
     </section>
 
-    <!-- ============ ESTADÍSTICAS ============ -->
+
     <section class="stats-fila">
         <!-- Ajusta la URL de destino de cada botón a tu página real -->
         <button type="button" class="tarjeta stat-tarjeta stat-tarjeta-boton" onclick="window.location.href='MisProductos.jsp'">
@@ -97,7 +97,7 @@
         </button>
     </section>
 
-    <!-- ============ INFORMACIÓN PERSONAL ============ -->
+
     <section class="tarjeta info-personal">
         <h3 class="titulo-tarjeta">Información personal</h3>
 
@@ -180,8 +180,8 @@
         </div>
     </section>
 
-    <!-- ============ SEGURIDAD ============ -->
-    <button type="button" class="boton-ancho boton-seguridad" onclick="window.location.href='CambiaContraseña.jsp'">
+
+    <button type="button" class="boton-ancho boton-seguridad" onclick="window.location.href='CambiaContrasenia.jsp'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="5" y="10.5" width="14" height="9.5" rx="1.6"/>
             <path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/>
@@ -190,14 +190,26 @@
         Cambiar contraseña
     </button>
 
-    <!-- ============ CERRAR SESIÓN ============ -->
-    <button type="button" class="boton-ancho boton-cerrar-sesion" onclick="cerrarSesion()">
+
+    <button type="button" class="boton-ancho boton-cerrar-sesion" onclick="abrirModalConfirmacion('cerrarSesion')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 4.5H6a1.5 1.5 0 0 0-1.5 1.5v12A1.5 1.5 0 0 0 6 19.5h3"/>
             <path d="M15.5 12H21m0 0-3-3m3 3-3 3"/>
             <path d="M15.5 12H10"/>
         </svg>
         Cerrar sesión
+    </button>
+
+
+    <button type="button" class="boton-ancho boton-eliminar-cuenta" onclick="abrirModalConfirmacion('eliminarCuenta')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 7h16"/>
+            <path d="M9 7V4.8c0-.7.6-1.3 1.3-1.3h3.4c.7 0 1.3.6 1.3 1.3V7"/>
+            <path d="M6 7l.8 12.2c.05.9.8 1.6 1.7 1.6h6.9c.9 0 1.65-.7 1.7-1.6L18 7"/>
+            <path d="M10 11v6"/>
+            <path d="M14 11v6"/>
+        </svg>
+        Eliminar cuenta
     </button>
 
 </main>
@@ -218,20 +230,79 @@
     }
 
     // Envía al usuario a la página encargada de aplicar el cambio.
-    // Ajusta la URL / parámetros al endpoint real de tu backend.
     function guardarCampo(idCampo) {
         const input = document.getElementById(idCampo);
         window.location.href = 'ModificarDato.jsp?campo=' + encodeURIComponent(idCampo) +
             '&valor=' + encodeURIComponent(input.value);
     }
 
-    // Cierre de sesión con confirmación explícita del usuario.
-    function cerrarSesion() {
-        if (confirm('¿Seguro que deseas cerrar sesión?')) {
-            window.location.href = 'CerrarSesion.jsp';
+    let accionActual = null;
+
+    function abrirModalConfirmacion(tipo) {
+        accionActual = tipo;
+        const modal = document.getElementById('modalConfirmacion');
+        const tarjeta = modal.querySelector('.modal-tarjeta');
+        const icono = document.getElementById('modalIconoSvg');
+        const titulo = document.getElementById('modalTitulo');
+        const texto = document.getElementById('modalTexto');
+        const checkboxContenedor = document.getElementById('modalCheckboxContenedor');
+        const checkbox = document.getElementById('modalCheckbox');
+        const btnConfirmar = document.getElementById('modalBtnConfirmar');
+
+        checkbox.checked = false;
+        tarjeta.classList.remove('modal-cerrar', 'modal-eliminar');
+
+        if (tipo === 'cerrarSesion') {
+            tarjeta.classList.add('modal-cerrar');
+            icono.innerHTML = '<path d="M9 4.5H6a1.5 1.5 0 0 0-1.5 1.5v12A1.5 1.5 0 0 0 6 19.5h3"/><path d="M15.5 12H21m0 0-3-3m3 3-3 3"/><path d="M15.5 12H10"/>';
+            titulo.textContent = '¿Cerrar sesión?';
+            texto.textContent = 'Tendrás que volver a iniciar sesión para acceder a tu cuenta.';
+            checkboxContenedor.style.display = 'none';
+            btnConfirmar.disabled = false;
+            btnConfirmar.textContent = 'Cerrar sesión';
+        } else if (tipo === 'eliminarCuenta') {
+            tarjeta.classList.add('modal-eliminar');
+            icono.innerHTML = '<path d="M4 7h16"/><path d="M9 7V4.8c0-.7.6-1.3 1.3-1.3h3.4c.7 0 1.3.6 1.3 1.3V7"/><path d="M6 7l.8 12.2c.05.9.8 1.6 1.7 1.6h6.9c.9 0 1.65-.7 1.7-1.6L18 7"/><path d="M10 11v6"/><path d="M14 11v6"/>';
+            titulo.textContent = '¿Eliminar tu cuenta?';
+            texto.textContent = 'Esta acción eliminará permanentemente tu cuenta y todos tus datos. No podrás recuperarlos.';
+            checkboxContenedor.style.display = 'flex';
+            btnConfirmar.disabled = true;
+            btnConfirmar.textContent = 'Eliminar cuenta';
         }
-        // Si cancela, no ocurre nada.
+
+        modal.classList.add('activo');
+        document.body.style.overflow = 'hidden';
     }
+
+    function cerrarModal() {
+        document.getElementById('modalConfirmacion').classList.remove('activo');
+        document.body.style.overflow = '';
+        accionActual = null;
+    }
+
+    function comprobarCheckbox() {
+        if (accionActual !== 'eliminarCuenta') return;
+        const checkbox = document.getElementById('modalCheckbox');
+        document.getElementById('modalBtnConfirmar').disabled = !checkbox.checked;
+    }
+
+    function confirmarAccion() {
+        if (accionActual === 'cerrarSesion') {
+            window.location.href = 'CerrarSesion.jsp';
+        } else if (accionActual === 'eliminarCuenta') {
+            window.location.href = 'EliminarCuenta.jsp';
+        }
+    }
+
+    // Cierra el modal si se hace click fuera de la tarjeta
+    document.getElementById('modalConfirmacion').addEventListener('click', function (e) {
+        if (e.target === this) cerrarModal();
+    });
+
+    // Cierra el modal con la tecla Escape
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') cerrarModal();
+    });
 </script>
 
 <!-- Menú de abajo -->
@@ -329,6 +400,26 @@ m162 -301 c66 -25 101 -93 83 -160 -15 -54 -174 -218 -220 -227 -57 -12 -89
         </svg>
         <p>ChatBot</p>
     </button>
+</div>
+<!-- ============ MODAL DE CONFIRMACIÓN ============ -->
+<div id="modalConfirmacion" class="modal-overlay">
+    <div class="modal-tarjeta">
+        <div class="modal-icono">
+            <svg id="modalIconoSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+        </div>
+        <h3 id="modalTitulo" class="modal-titulo"></h3>
+        <p id="modalTexto" class="modal-texto"></p>
+
+        <label id="modalCheckboxContenedor" class="modal-checkbox-contenedor" style="display:none;">
+            <input type="checkbox" id="modalCheckbox" onchange="comprobarCheckbox()">
+            <span>Entiendo que esta acción es irreversible</span>
+        </label>
+
+        <div class="modal-botones">
+            <button type="button" class="modal-btn modal-btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+            <button type="button" id="modalBtnConfirmar" class="modal-btn modal-btn-confirmar" onclick="confirmarAccion()">Confirmar</button>
+        </div>
+    </div>
 </div>
 </body>
 </html>

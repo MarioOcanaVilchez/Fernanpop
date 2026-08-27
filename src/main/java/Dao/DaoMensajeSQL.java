@@ -84,6 +84,23 @@ public class DaoMensajeSQL {
             throw new RuntimeException(e);
         }
     }
+    public Mensaje buscaMensajeChatUsuario(DaoManager dao,long idChat,long id,Usuario uTemp){
+        String sentenca = "select * from mensajesUser where idChat=" + idChat + " and id=" + id + " and idUserRecibe=" + uTemp.getId();
+        try {
+            dao.open();
+            Statement stmt = dao.getConexion().createStatement();
+            ResultSet rs = stmt.executeQuery(sentenca);
+            if (rs.next()){
+                Mensaje mensaje = new Mensaje(id,rs.getString("mensaje"),uTemp,Utilidades.pasarFechaHoraLocaldate(rs.getString("fecha")),false);
+                dao.close();
+                return mensaje;
+            }
+            dao.close();
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public boolean actualizaMensaje(DaoManager dao,long idChat,long idMensaje,String nuevoMensaje,Usuario uTemp){
         Mensaje mensaje = buscaMensaje(dao,idChat,idMensaje,uTemp);
         if (mensaje == null) return false;

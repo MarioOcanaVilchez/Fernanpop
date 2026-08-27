@@ -25,7 +25,7 @@ form {
 }
 
 form::before {
-    content: "Iniciar Sesión";
+    content: "Registrar";
     display: block;
     font-size: 24px;
     font-weight: 600;
@@ -40,11 +40,8 @@ form p {
     color: #333;
     font-weight: 500;
 }
-form p:nth-child(5){
-    margin-bottom: 0px;
-}
 
-form input[type="text"], form input[type="password"] {
+form input[type="text"]{
     width: 100%;
     padding: 10px 4px;
     margin-top: 6px;
@@ -57,7 +54,7 @@ form input[type="text"], form input[type="password"] {
     outline: none;
 }
 
-form input[type="text"]:focus, form input[type="password"]:focus {
+form input[type="text"]:focus{
     border-color: #27ae60;
     box-shadow: 0 2px 0 0 rgba(39, 174, 96, 0.15);
 }
@@ -76,6 +73,7 @@ form input[type="submit"] {
     letter-spacing: 0.3px;
     box-shadow: 0 6px 16px -4px rgba(39, 174, 96, 0.5);
     transition: background-color 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease;
+    margin-bottom: 18px;
 }
 
 form input[type="submit"]:hover {
@@ -96,9 +94,3 @@ form a {
     font-weight: 500;
     text-decoration: none;
 }
-.error{
-    color: red;
-}
-
-
-

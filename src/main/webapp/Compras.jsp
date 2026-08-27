@@ -11,7 +11,7 @@
 <html>
 <head>
     <title>Compras</title>
-    <link rel="stylesheet" type="text/css" href="CSS/Compras.css?v=4">
+    <link rel="stylesheet" type="text/css" href="CSS/Compras.css?v=6">
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
 </head>
 <body>
@@ -92,8 +92,8 @@
                         String claseRelleno = (i < t.getPuntuacion()) ? "rellena" : "";
                         out.print("<svg viewBox=\"0 0 100 100\"><polygon class=\"" + claseRelleno + "\" points=\"50,5 61,38 96,38 68,59 79,92 50,71 21,92 32,59 4,38 39,38\"></polygon></svg>");
                     }
-                    out.print("</div>");
                 }
+                out.print("</div>");
                 if (t.getComentario() == null) out.print("<p>No Comentado</p>");
                 else out.print("<p>" + t.getComentario() + "</p>");
                 out.print("<button onclick=\"window.location.href='Puntuar.jsp?id=" + t.getId() + "'\">");

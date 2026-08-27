@@ -17,20 +17,14 @@
     double precio;
     switch (accion) {
         case "enviarCorreoVerificacion":
-            if (gestionAPP.buscaMail(email) != null){
-                session.setAttribute("error","Usuario ya registrado");
-                session.setAttribute("recomendacion","Use otra cuenta o inicie sesión con esta");
-                out.print("Error");
-            } else {
             String numEntrada = gestionAPP.generarNumEntrada();
             session.setAttribute("numEntrada", numEntrada);
             if (gestionAPP.enviarCorreoVerificacion(numEntrada, email)) {
-                out.print("ValidarEmail");
+                out.print("");
             } else {
               session.setAttribute("error","Error al enviar el correo");
               session.setAttribute("recomendacion","Compruebe la conexión");
                 out.print("Error");
-            }
             }
         break;
         case "crearCuenta":
@@ -38,7 +32,11 @@
             clave = (String) session.getAttribute("clave");
             apel = (String) session.getAttribute("apel");
             int telefono = 0;
+            try{
             if (session.getAttribute("telefono") != null) telefono = Integer.parseInt((String) session.getAttribute("telefono"));
+            } catch (NumberFormatException e) {
+
+            }
             if (gestionAPP.addUsuario(email,nombre,apel,clave,telefono)){
                 session.setAttribute("controller",gestionAPP);
                 out.print("index");

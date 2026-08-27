@@ -510,6 +510,173 @@ img {
 .boton-cerrar-sesion:hover {
     background-color: var(--rojo-oscuro);
 }
+.boton-eliminar-cuenta {
+    background-color: var(--rojo-suave);
+    color: var(--rojo-oscuro);
+}
+
+.boton-eliminar-cuenta:hover {
+    background-color: var(--rojo);
+    color: var(--blanco);
+}
+
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(28, 28, 28, 0.5);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 200;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.modal-overlay.activo {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-tarjeta {
+    background-color: var(--blanco);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-card-hover);
+    padding: 28px 24px 24px;
+    max-width: 340px;
+    width: 100%;
+    text-align: center;
+    transform: translateY(16px) scale(0.96);
+    transition: transform 0.25s ease;
+}
+
+.modal-overlay.activo .modal-tarjeta {
+    transform: translateY(0) scale(1);
+}
+
+.modal-icono {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radio-pill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+}
+
+.modal-icono svg {
+    width: 26px;
+    height: 26px;
+}
+
+.modal-tarjeta.modal-cerrar .modal-icono {
+    background-color: var(--verde-suave);
+    color: var(--verde-oscuro);
+}
+
+.modal-tarjeta.modal-eliminar .modal-icono {
+    background-color: var(--rojo-suave);
+    color: var(--rojo-oscuro);
+}
+
+.modal-titulo {
+    font-family: 'Poppins', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--texto-principal);
+    margin-bottom: 8px;
+}
+
+.modal-texto {
+    font-size: 13.5px;
+    color: var(--texto-secundario);
+    line-height: 1.5;
+    margin: 0 0 18px;
+}
+
+.modal-checkbox-contenedor {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    text-align: left;
+    background-color: var(--rojo-suave);
+    border-radius: var(--radio-medio);
+    padding: 12px;
+    margin-bottom: 18px;
+    cursor: pointer;
+}
+
+.modal-checkbox-contenedor input[type="checkbox"] {
+    margin-top: 2px;
+    accent-color: var(--rojo);
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.modal-checkbox-contenedor span {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--rojo-oscuro);
+    line-height: 1.4;
+}
+
+.modal-botones {
+    display: flex;
+    gap: 10px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: var(--radio-pill);
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
+}
+
+.modal-btn-cancelar {
+    background-color: var(--gris-fondo);
+    color: var(--texto-principal);
+}
+
+.modal-btn-cancelar:hover {
+    background-color: #e6e9e8;
+}
+
+.modal-btn-confirmar {
+    color: var(--blanco);
+}
+
+.modal-tarjeta.modal-cerrar .modal-btn-confirmar {
+    background-color: var(--verde);
+}
+
+.modal-tarjeta.modal-cerrar .modal-btn-confirmar:hover {
+    background-color: var(--verde-oscuro);
+}
+
+.modal-tarjeta.modal-eliminar .modal-btn-confirmar {
+    background-color: var(--rojo);
+}
+
+.modal-tarjeta.modal-eliminar .modal-btn-confirmar:hover:not(:disabled) {
+    background-color: var(--rojo-oscuro);
+}
+
+.modal-btn-confirmar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.modal-btn:active:not(:disabled) {
+    transform: scale(0.96);
+}
 
 @media (max-width: 480px) {
     .perfil-contenedor {

@@ -3,9 +3,7 @@ package Modelos;
 import Controller.GestionAPP;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Usuario implements Serializable {
     private int id;
@@ -126,7 +124,7 @@ public class Usuario implements Serializable {
         int cont = 0;
         double media = 0;
         for (Trato t : historicoVentas){
-            if (t.getPuntuacion() != 0 ){
+            if (t.getPuntuacion() != -1 ){
                 cont++;
                 media += t.getPuntuacion();
             }
