@@ -7,12 +7,10 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import java.awt.*;
 import java.io.IOException;
 
-//Todo hay que arreglar los nombres de los usuarios
 public class PlantillasCorreo {
     public static String emailNumero(String num){
         String cuerpo = "";
@@ -131,7 +129,6 @@ public class PlantillasCorreo {
 
     public static String pdf(String comprador,String vendedor,String producto,double precio) {
         try {
-
             PDDocument doc = new PDDocument();
             PDPage page = new PDPage(PDRectangle.A4);
             doc.addPage(page);

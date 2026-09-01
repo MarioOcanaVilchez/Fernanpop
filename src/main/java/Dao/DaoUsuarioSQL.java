@@ -43,12 +43,16 @@ public class DaoUsuarioSQL implements DaoUsuario{
         }
     }
     public boolean recuperaUsuario(DaoManager dao,Usuario usuario){
-        String sentencia = "delete from usuarioBorrado where email='" + usuario.getEmail() + "'";
+        String sentencia = "select * from usuarioBorrado where email='" + usuario.getEmail() + "'";
         try {
             dao.open();
             Statement stmt = dao.getConexion().createStatement();
+            ResultSet rs = stmt.executeQuery(sentencia);
+            rs.next();
+            String clave = rs.getString("clave");
+            sentencia = "delete from usuarioBorrado where email='" + usuario.getEmail() + "'";
             stmt.executeUpdate(sentencia);
-            sentencia = "insert into usuario values(" + usuario.getId() + ",'" + usuario.getEmail() + "','" + usuario.getApel() + "','" + usuario.getClave() + "'," + usuario.getMovil() + ",false,'" + usuario.getNombre() + "')";
+            sentencia = "insert into usuario values(" + usuario.getId() + ",'" + usuario.getEmail() + "','" + usuario.getApel() + "','" + clave + "'," + usuario.getMovil() + ",false,'" + usuario.getNombre() + "')";
             stmt.executeUpdate(sentencia);
             dao.close();
             return true;

@@ -36,8 +36,6 @@ public class GestionAPP {
         daoChat = new DaoChatSQL();
         daoMensaje = new DaoMensajeSQL();
         daoBloqueo = new DaoBloqueoSQL();
-        //Persistencia.existenCarpetas();
-        //usuario = cogeUsuarioSesionAnt();
     }
 
     public Usuario getUsuario() {
@@ -82,11 +80,11 @@ public class GestionAPP {
     public Usuario buscaMail(String mail){
         return daoUsuario.buscaUsuarioMail(dao,mail);
     }
-    //consulta select
     public boolean addUsuario(String email,String nombre,String apel,String clave,int movil){
         clave = encriptarClave(clave);
         if (daoUsuario.insertaUsuario(dao,email,nombre,apel,clave,movil)) {
             usuario = daoUsuario.buscaUsuarioMail(dao,email);
+            Comunicaciones.enviarMensajeTelegram("nueva cuenta de usuario " + usuario.getEmail());
             return true;
         } else return false;
     }
@@ -94,22 +92,17 @@ public class GestionAPP {
         return daoTrato.eliminaTrato(dao,id);
     }
     public boolean addProducto(String titulo,String descripcion,String estado,double precio){
-        if (!Comunicaciones.enviarEmail(usuario.getEmail(),"Nuevo producto publicado",PlantillasCorreo.emailNuevoProducto(titulo,descripcion,precio))) return false;
-        if(daoProducto.insertarProducto(dao,usuario,titulo,descripcion,estado,precio)) {
-            //LogManager.logNuevoProducto(producto, usuario);
-            return true;
-        }
-        return false;
+        if(!daoProducto.insertarProducto(dao,usuario,titulo,descripcion,estado,precio)) return false;
+        Comunicaciones.enviarMensajeTelegram("El usuario " + usuario.getEmail() + " a puesto a la venta " + titulo + " por " + precio + " €");
+        Comunicaciones.enviarEmail(usuario.getEmail(),"Nuevo producto publicado",PlantillasCorreo.emailNuevoProducto(titulo,descripcion,precio));
+        return true;
     }
     public boolean addProducto(String titulo,String descripcion,String estado,double precio,long id,String nombreImagen){
-        if (!Comunicaciones.enviarEmail(usuario.getEmail(),"Nuevo producto publicado",PlantillasCorreo.emailNuevoProducto(titulo,descripcion,precio))) return false;
-        if(daoProducto.insertarProducto(dao,usuario,titulo,descripcion,estado,precio,id,nombreImagen)) {
-            //LogManager.logNuevoProducto(producto, usuario);
-            return true;
-        }
-        return false;
+        if(!daoProducto.insertarProducto(dao,usuario,titulo,descripcion,estado,precio,id,nombreImagen)) return false;
+        Comunicaciones.enviarMensajeTelegram("El usuario " + usuario.getEmail() + " a puesto a la venta " + titulo + " por " + precio + " €");
+        Comunicaciones.enviarEmail(usuario.getEmail(),"Nuevo producto publicado",PlantillasCorreo.emailNuevoProducto(titulo,descripcion,precio));
+        return true;
     }
-    //consulta select
     public boolean login(String email,String clave){
         usuario = daoUsuario.login(dao,email,clave);
         return usuario != null;
@@ -138,6 +131,7 @@ public class GestionAPP {
     public boolean eliminarUsuario(){
         if (eliminaAllProductos() && eliminaAllTratosPendientes()) {
             if (daoUsuario.eliminaUsuario(dao, usuario, daoProducto)) {
+                Comunicaciones.enviarMensajeTelegram("El usuario " + usuario.getEmail() + " a borrado la cuenta");
                 usuario = null;
                 return true;
             }
@@ -145,7 +139,9 @@ public class GestionAPP {
         return false;
     }
     public boolean recuperaUsuario(String email){
-        return daoUsuario.recuperaUsuario(dao,buscaMail(email));
+        if (!daoUsuario.recuperaUsuario(dao,buscaMail(email))) return false;
+        Comunicaciones.enviarMensajeTelegram("El usuario " + email + " a recuperado la cuenta");
+        return true;
     }
 
     public boolean usuarioActivo(String email){
@@ -199,12 +195,14 @@ public class GestionAPP {
     public boolean eliminarProducto(Producto p){
         if (daoProducto.borrarProducto(dao,p)){
             if (p.getNombreImagen() != null) eliminaImagen(p.getNombreImagen());
+            Comunicaciones.enviarMensajeTelegram("El usuario " + usuario.getEmail() + " a eliminado el producto " + p.getTitulo());
             return true;
         }
         return false;
     }
     public boolean vendeProducto(Trato t, Usuario comprador){
         if (daoTrato.addtratoVenta(dao, t, usuario, daoUsuario, daoProducto)) {
+            Comunicaciones.enviarMensajeTelegram("El usuario " + usuario.getEmail() + " a vendido " + t.getProducto().getTitulo() + " por " + t.getPrecio() + " € a " + comprador.getEmail());
             Comunicaciones.enviarEmailConPDF(comprador.getEmail(), "¡Enhorabuena, compra realizada!", PlantillasCorreo.emailProductoVendido(t.getProducto(), usuario), t, comprador.getEmail(), usuario.getEmail());
             Comunicaciones.enviarEmailConPDF(usuario.getEmail(), "¡Enhorabuena, venta realizada!", PlantillasCorreo.emailProductoVendidoComprador(t.getProducto(), comprador), t, comprador.getEmail(), usuario.getEmail());
             return true;
@@ -218,6 +216,7 @@ public class GestionAPP {
         String emailAnt = usuario.getEmail();
         usuario.setEmail(email);
         if (daoUsuario.actualizaUsuario(dao,usuario)){
+            Comunicaciones.enviarMensajeTelegram("El usuario " + emailAnt + " actualizó su email a " + usuario.getEmail());
             return true;
         }
         usuario.setEmail(emailAnt);
@@ -487,6 +486,5 @@ public class GestionAPP {
     public Producto rellenaHuecoProductoPeticionIA(ArrayList<Producto> productosActuales,String peticion){
         return daoProducto.getProducto(dao,usuario,productosActuales,daoTrato.productosVentasPendientesConParametros(dao,usuario),peticion);
     }
-
 
 }
