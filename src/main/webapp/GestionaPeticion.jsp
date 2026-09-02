@@ -14,8 +14,6 @@
     if (mensajes.getLast().getContenido().startsWith("[SQL]")){
         mensajes.getLast().setContenido(mensajes.getLast().getContenido().replace("[SQL]","").replace("[/SQL]",""));
         //Metodo para hacer consulta reiteradamente
-        //todo cambiar metodo getPaginaProductos cuando el usuario no sea null para permitir esto
-        //todo tambien ara falta una pagina intermedia donde obtendremos la primera pagina y contaremos los productos totales
         String consultaIA = mensajes.getLast().getContenido();
         int numProductos = gestionAPP.totalProductosPeticionIA(consultaIA);
         session.setAttribute("numPaginas",(numProductos % 12 != 0? numProductos / 12 + 1 : numProductos / 12));

@@ -27,6 +27,7 @@ public class GestionAPP {
     private DaoMensajeSQL daoMensaje;
     private DaoBloqueoSQL daoBloqueo;
     private Usuario usuario;
+    private long sesionID;
 
     public GestionAPP() {
         dao = DaoManager.getSinglentonInstance();
@@ -36,6 +37,7 @@ public class GestionAPP {
         daoChat = new DaoChatSQL();
         daoMensaje = new DaoMensajeSQL();
         daoBloqueo = new DaoBloqueoSQL();
+        sesionID = (long) (Math.random() * Long.MAX_VALUE);
     }
 
     public Usuario getUsuario() {
@@ -429,6 +431,7 @@ public class GestionAPP {
         body.put("message", pregunta);
         body.put("mode", "chat");
         body.put("stream", false);
+        body.put("sessionId", sesionID);
 
         String jsonBody = body.toString();
         try {
@@ -460,14 +463,29 @@ public class GestionAPP {
     }
     //Esto solo se ejecuta la primera vez para saber cuantas páginas hay
     public String completaPeticionIANumProductos(String peticion) {
-        peticion += " and id_usuario !=" + usuario.getId();
-        ArrayList<Long> ids = daoTrato.productosVentasPendientesConParametros(dao, usuario);
-        if (!ids.isEmpty()) {
-            peticion += " and id not in(";
-            for (long id : ids){
-                peticion += id + ",";
+        if (!peticion.contains("order by") && !peticion.contains("ORDER BY")) {
+            peticion += " and id_usuario !=" + usuario.getId();
+            ArrayList<Long> ids = daoTrato.productosVentasPendientesConParametros(dao, usuario);
+            if (!ids.isEmpty()) {
+                peticion += " and id not in(";
+                for (long id : ids) {
+                    peticion += id + ",";
+                }
+                peticion = peticion.substring(0, peticion.length() - 1) + ") order by rand()";
             }
-            peticion = peticion.substring(0,peticion.length() - 1) + ") order by rand()";
+        } else {
+            int posicion = peticion.indexOf("order by");
+            if (posicion == -1) posicion = peticion.indexOf("ORDER BY");
+            String parteFinal = peticion.substring(posicion);
+            peticion = peticion.substring(0,posicion) + " and id_usuario !=" + usuario.getId();
+            ArrayList<Long> ids = daoTrato.productosVentasPendientesConParametros(dao, usuario);
+            if (!ids.isEmpty()) {
+                peticion += " and id not in(";
+                for (long id : ids) {
+                    peticion += id + ",";
+                }
+                peticion = peticion.substring(0, peticion.length() - 1) + ") " + parteFinal;
+            }
         }
         return peticion;
     }

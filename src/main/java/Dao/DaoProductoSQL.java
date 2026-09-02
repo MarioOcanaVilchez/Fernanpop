@@ -617,22 +617,44 @@ public class DaoProductoSQL {
 
     }
     public String generaPeticion(Usuario uTemp,String peticion,ArrayList<Producto> productosActuales,ArrayList<Long> productosSolicitados,int limit){
-        peticion += " and id_usuario != " + uTemp.getId();
-        if (productosActuales != null && !productosActuales.isEmpty()){
-            peticion += " and id not in(";
-            for (Producto p : productosActuales){
-                peticion += p.getId() + ",";
+        if (!peticion.contains("order by") && !peticion.contains("ORDER BY")) {
+            peticion += " and id_usuario != " + uTemp.getId();
+            if (productosActuales != null && !productosActuales.isEmpty()) {
+                peticion += " and id not in(";
+                for (Producto p : productosActuales) {
+                    peticion += p.getId() + ",";
+                }
+                peticion = peticion.substring(0, peticion.length() - 1) + ")";
             }
-            peticion = peticion.substring(0,peticion.length() - 1) + ")";
-        }
-        if (productosSolicitados != null && !productosSolicitados.isEmpty()){
-            peticion += " and id not in(";
-            for (long id : productosSolicitados){
-                peticion += id + ",";
+            if (productosSolicitados != null && !productosSolicitados.isEmpty()) {
+                peticion += " and id not in(";
+                for (long id : productosSolicitados) {
+                    peticion += id + ",";
+                }
+                peticion = peticion.substring(0, peticion.length() - 1) + ")";
             }
-            peticion = peticion.substring(0,peticion.length() - 1) + ")";
+            peticion += " order by rand() limit " + limit;
+        } else {
+            int posicion = peticion.indexOf("order by");
+            if (posicion == -1) posicion = peticion.indexOf("ORDER BY");
+            String parteFinal = peticion.substring(posicion);
+            peticion = peticion.substring(0,posicion) + " and id_usuario !=" + uTemp.getId();
+            if (productosActuales != null && !productosActuales.isEmpty()) {
+                peticion += " and id not in(";
+                for (Producto p : productosActuales) {
+                    peticion += p.getId() + ",";
+                }
+                peticion = peticion.substring(0, peticion.length() - 1) + ")";
+            }
+            if (productosSolicitados != null && !productosSolicitados.isEmpty()) {
+                peticion += " and id not in(";
+                for (long id : productosSolicitados) {
+                    peticion += id + ",";
+                }
+                peticion = peticion.substring(0, peticion.length() - 1) + ")";
+            }
+            peticion +=  " " + parteFinal + " limit " + limit;
         }
-        peticion += " order by rand() limit " + limit;
         return peticion;
     }
     public Producto getProducto(DaoManager dao,Usuario uTemp,ArrayList<Producto> productosActuales,String textoBuscar,String orden,int precioMin,int precioMax,ArrayList<Long> idProductosSolicitados){
