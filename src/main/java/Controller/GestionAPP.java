@@ -195,18 +195,20 @@ public class GestionAPP {
         return daoTrato.addtratoCompra(dao, vendedor, producto.getId(), usuario.getId(), precio, daoProducto,daoUsuario);
     }
     public boolean eliminarProducto(Producto p){
-        if (daoProducto.borrarProducto(dao,p)){
-            if (p.getNombreImagen() != null) eliminaImagen(p.getNombreImagen());
-            Comunicaciones.enviarMensajeTelegram("El usuario " + usuario.getEmail() + " a eliminado el producto " + p.getTitulo());
-            return true;
+        if (daoTrato.eliminarTratosProducto(dao,p)) {
+            if (daoProducto.borrarProducto(dao, p)) {
+                if (p.getNombreImagen() != null) eliminaImagen(p.getNombreImagen());
+                Comunicaciones.enviarMensajeTelegram("El usuario " + usuario.getEmail() + " a eliminado el producto " + p.getTitulo());
+                return true;
+            }
         }
         return false;
     }
     public boolean vendeProducto(Trato t, Usuario comprador){
         if (daoTrato.addtratoVenta(dao, t, usuario, daoUsuario, daoProducto)) {
             Comunicaciones.enviarMensajeTelegram("El usuario " + usuario.getEmail() + " a vendido " + t.getProducto().getTitulo() + " por " + t.getPrecio() + " € a " + comprador.getEmail());
-            Comunicaciones.enviarEmailConPDF(comprador.getEmail(), "¡Enhorabuena, compra realizada!", PlantillasCorreo.emailProductoVendido(t.getProducto(), usuario), t, comprador.getEmail(), usuario.getEmail());
-            Comunicaciones.enviarEmailConPDF(usuario.getEmail(), "¡Enhorabuena, venta realizada!", PlantillasCorreo.emailProductoVendidoComprador(t.getProducto(), comprador), t, comprador.getEmail(), usuario.getEmail());
+            Comunicaciones.enviarEmailConPDF(comprador.getEmail(), "¡Enhorabuena, compra realizada!", PlantillasCorreo.emailProductoVendido(t, usuario), t, comprador.getEmail(), usuario.getEmail());
+            Comunicaciones.enviarEmailConPDF(usuario.getEmail(), "¡Enhorabuena, venta realizada!", PlantillasCorreo.emailProductoVendidoComprador(t, comprador), t, comprador.getEmail(), usuario.getEmail());
             return true;
         }
         return false;

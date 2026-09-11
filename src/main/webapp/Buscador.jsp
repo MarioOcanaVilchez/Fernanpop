@@ -104,7 +104,6 @@
     </button>
     <input type="submit" value="Buscar">
 </form>
-
 <script>
     (function () {
         const sliderMin = document.getElementById('sliderMin');

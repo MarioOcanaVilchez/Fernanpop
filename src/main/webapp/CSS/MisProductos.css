@@ -153,7 +153,12 @@ img {
     color: var(--texto-secundario);
     font-style: italic;
 }
-
+body > p {
+    text-align: center;
+    color: var(--texto-secundario);
+    font-size: 14px;
+    margin: 30px auto;
+}
 .listaProductos {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

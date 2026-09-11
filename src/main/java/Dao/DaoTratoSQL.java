@@ -297,4 +297,16 @@ public class DaoTratoSQL {
             return idsProductos;
         }
     }
+    public boolean eliminarTratosProducto(DaoManager dao,Producto producto){
+        String sentencia = "delete from trato where idProducto=" + producto.getId();
+        try {
+            dao.open();
+            Statement stmt = dao.getConexion().createStatement();
+            stmt.executeUpdate(sentencia);
+            dao.close();
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
 }

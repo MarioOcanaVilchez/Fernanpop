@@ -11,7 +11,7 @@
 <html>
 <head>
     <title>Mis Productos</title>
-    <link rel="stylesheet" type="text/css" href="CSS/MisProductos.css">
+    <link rel="stylesheet" type="text/css" href="CSS/MisProductos.css?v=2">
     <link rel="icon" type="image/png" href="imagenes/logo%20fernanpop.png">
 </head>
 <body>

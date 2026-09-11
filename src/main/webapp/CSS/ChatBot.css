@@ -242,7 +242,6 @@ img {
     transform: translate(-50%, -50%);
 }
 
-/*Parte del chatbot eliminar despues*/
 #enviarMensajes {
     position: fixed;
     bottom: var(--alto-menu);
@@ -364,7 +363,7 @@ img {
     margin-bottom: 3px;
 }
 
-/* --- Mensaje propio: derecha, blanco, pico a la derecha --- */
+/*Mensaje propio*/
 .mensajePropio {
     position: relative;
     background-color: var(--blanco);
@@ -390,7 +389,7 @@ img {
     border-right: 0;
 }
 
-/* --- Mensaje de IA: izquierda, blanco, pico a la izquierda --- */
+/*Mensaje de IA*/
 .mensajeIA {
     position: relative;
     background-color: var(--blanco);

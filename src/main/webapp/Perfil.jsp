@@ -214,7 +214,6 @@
 
 </main>
 
-<!-- ============ JAVASCRIPT DEL PERFIL ============ -->
 <script>
     // Muestra/oculta el botón "Guardar cambios" de un campo según si su
     // valor difiere del valor original que tenía al cargar la página.
@@ -264,7 +263,7 @@
             tarjeta.classList.add('modal-eliminar');
             icono.innerHTML = '<path d="M4 7h16"/><path d="M9 7V4.8c0-.7.6-1.3 1.3-1.3h3.4c.7 0 1.3.6 1.3 1.3V7"/><path d="M6 7l.8 12.2c.05.9.8 1.6 1.7 1.6h6.9c.9 0 1.65-.7 1.7-1.6L18 7"/><path d="M10 11v6"/><path d="M14 11v6"/>';
             titulo.textContent = '¿Eliminar tu cuenta?';
-            texto.textContent = 'Esta acción eliminará permanentemente tu cuenta y todos tus datos. No podrás recuperarlos.';
+            texto.textContent = 'Esta acción eliminará tu cuenta y todos tus datos. No podrás recuperarlos.';
             checkboxContenedor.style.display = 'flex';
             btnConfirmar.disabled = true;
             btnConfirmar.textContent = 'Eliminar cuenta';
@@ -401,7 +400,7 @@ m162 -301 c66 -25 101 -93 83 -160 -15 -54 -174 -218 -220 -227 -57 -12 -89
         <p>ChatBot</p>
     </button>
 </div>
-<!-- ============ MODAL DE CONFIRMACIÓN ============ -->
+<!--Modal de confirmación -->
 <div id="modalConfirmacion" class="modal-overlay">
     <div class="modal-tarjeta">
         <div class="modal-icono">

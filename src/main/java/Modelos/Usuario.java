@@ -130,7 +130,10 @@ public class Usuario implements Serializable {
             }
         }
         if (media == 0) return -1;
-        return media / cont;
+        media = media / cont;
+        media = media * 100;
+        media = (int) media;
+        return media / 100;
     }
     public String pintaMovil(){
         String telefono = String.valueOf(movil);

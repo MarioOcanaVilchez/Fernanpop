@@ -50,7 +50,7 @@ public class Pdfs {
                 // Variable de posición vertical relativa, se ajusta según se dibuja
                 float cursorY = pageHeight;
 
-                // ===== 1. ENCABEZADO (banda de color de marca) =====
+                // ENCABEZADO (banda de color de marca)
                 float headerHeight = 90f;
                 cs.setNonStrokingColor(VERDE_OSCURO);
                 cs.addRect(0, pageHeight - headerHeight, pageWidth, headerHeight);
@@ -102,7 +102,7 @@ public class Pdfs {
 
                 cursorY = pageHeight - headerHeight - 40;
 
-                // ===== 2. FECHA / REFERENCIA =====
+                // FECHA / REFERENCIA
                 String fechaTexto = LocalDateTime.now()
                         .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", new Locale("es", "ES")));
                 cs.setNonStrokingColor(GRIS_MEDIO);
@@ -114,7 +114,7 @@ public class Pdfs {
 
                 cursorY -= 30;
 
-                // ===== 3. TARJETA - RESUMEN DE LA TRANSACCIÓN =====
+                //TARJETA - RESUMEN DE LA TRANSACCIÓN
                 float filaAltura = 28f;
                 int numFilas = 3;
                 float cardPadding = 15f;
@@ -159,7 +159,7 @@ public class Pdfs {
 
                 cursorY = cardY - 30;
 
-                // ===== 4. TARJETA DESTACADA - PRECIO TOTAL =====
+                // TARJETA DESTACADA - PRECIO TOTAL
                 float totalCardHeight = 70f;
                 float totalCardY = cursorY - totalCardHeight;
 
@@ -168,7 +168,7 @@ public class Pdfs {
                 cs.fill();
 
                 String labelTotal = "PRECIO TOTAL";
-                String valorTotal = String.format(new Locale("es", "ES"), "$ %,.2f", precio);
+                String valorTotal = String.format(new Locale("es", "ES"), "%,.2f €", precio);
 
                 cs.setNonStrokingColor(BLANCO);
                 cs.beginText();
@@ -185,14 +185,14 @@ public class Pdfs {
 
                 cursorY = totalCardY - 40;
 
-                // ===== 5. LÍNEA DECORATIVA =====
+                // LÍNEA DECORATIVA
                 cs.setStrokingColor(GRIS_BORDE);
                 cs.setLineWidth(0.5f);
                 cs.moveTo(margin, cursorY);
                 cs.lineTo(pageWidth - margin, cursorY);
                 cs.stroke();
 
-                // ===== 6. PIE DE PÁGINA =====
+                // PIE DE PÁGINA
                 float footerY = 40f;
                 cs.setNonStrokingColor(GRIS_MEDIO);
                 cs.beginText();

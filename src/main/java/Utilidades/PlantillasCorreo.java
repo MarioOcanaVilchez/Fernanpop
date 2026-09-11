@@ -1,5 +1,6 @@
 package Utilidades;
 import Modelos.Producto;
+import Modelos.Trato;
 import Modelos.Usuario;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -89,7 +90,7 @@ public class PlantillasCorreo {
     }
     // Color anterior del borde de producto publicado #3498db
 
-    public static String emailProductoVendido(Producto p, Usuario vendedor) {
+    public static String emailProductoVendido(Trato t, Usuario vendedor) {
         return """
         <div style="font-family: sans-serif; border: 1px solid #eee; padding: 20px; border-radius: 10px; max-width: 500px;">
             <h1 style="color: #27ae60;">💰 ¡Enhorabuena, compra realizada!</h1>
@@ -100,9 +101,9 @@ public class PlantillasCorreo {
             </div>
             <p style="margin-top: 15px;">Ya puedes ponerte en contacto con el vendedor para el envío.</p>
         </div>
-        """.formatted(vendedor.getEmail(), p.getTitulo(), p.getPrecio());
+        """.formatted(vendedor.getEmail(), t.getProducto().getTitulo(), t.getPrecio());
     }
-    public static String emailProductoVendidoComprador(Producto p, Usuario comprador) {
+    public static String emailProductoVendidoComprador(Trato t, Usuario comprador) {
         return """
         <div style="font-family: sans-serif; border: 1px solid #eee; padding: 20px; border-radius: 10px; max-width: 500px;">
             <h1 style="color: #27ae60;">💰 ¡Enhorabuena, venta realizada!</h1>
@@ -113,7 +114,7 @@ public class PlantillasCorreo {
             </div>
             <p style="margin-top: 15px;">Ya puedes ponerte en contacto con el vendedor para el envío.</p>
         </div>
-        """.formatted(comprador.getEmail(), p.getTitulo(), p.getPrecio());
+        """.formatted(comprador.getEmail(), t.getProducto().getTitulo(), t.getPrecio());
     }
     public static String emailSolicitud(Producto productos, Usuario comprador,double precio){
         return "<div style=\"font-family: sans-serif; border: 1px solid #eee; padding: 20px; border-radius: 10px; max-width: 500px;\">"
