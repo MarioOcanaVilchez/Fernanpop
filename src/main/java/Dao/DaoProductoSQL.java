@@ -612,7 +612,7 @@ public class DaoProductoSQL {
             dao.close();
             return productos;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return productos;
         }
 
     }

@@ -28,7 +28,7 @@
     };
 
     out.print("<div id=\"bannerArriba\">");
-    out.print("<img alt=\"logo\" src=\"imagenes/logo%20fernanpop.png\">");
+    out.print("<img alt=\"logo\" src=\"imagenes/logo%20fernanpop.png\" onclick=\"window.location.href='BorraVariablesBuscar.jsp'\">");
 
     out.print("<div class=\"infoUsuario\">");
     if (gestionAPP.getUsuario() != null) {

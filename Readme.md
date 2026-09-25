@@ -516,6 +516,9 @@ Temperature: 0
 
 De esta forma, tanto la ejecución del modelo como la configuración de AnythingLLM están orientadas a respuestas deterministas.
 
+
+En anythingLLM debes introducir los ficheros de **RAG Alfred** en el espacio de trabajo e implementar el system prompt de systemPrompAlfred.txt
+
 ---
 
 ## 5. Configuración para generación de SQL

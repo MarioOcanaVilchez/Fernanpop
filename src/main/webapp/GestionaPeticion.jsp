@@ -16,11 +16,13 @@
         //Metodo para hacer consulta reiteradamente
         String consultaIA = mensajes.getLast().getContenido();
         int numProductos = gestionAPP.totalProductosPeticionIA(consultaIA);
-        session.setAttribute("numPaginas",(numProductos % 12 != 0? numProductos / 12 + 1 : numProductos / 12));
         session.setAttribute("pagina",1);
-        session.setAttribute("productos", gestionAPP.getPaginaProductosPeticionIA(null,consultaIA));
         session.setAttribute("consultaIA",consultaIA);
-        response.sendRedirect("index.jsp");
+        if (numProductos == -1 || numProductos == 0){
+            session.setAttribute("numPaginas",1);
+            session.setAttribute("productos",new ArrayList<>());
+        }
+        session.setAttribute("numPaginas",(numProductos % 12 != 0? numProductos / 12 + 1 : numProductos / 12));session.setAttribute("productos", gestionAPP.getPaginaProductosPeticionIA(null,consultaIA));response.sendRedirect("index.jsp");
 
     } else {
         mensajes.getLast().setContenido(mensajes.getLast().getContenido().replace("[CONVERSACIÓN]","").replace("[/CONVERSACIÓN]",""));
